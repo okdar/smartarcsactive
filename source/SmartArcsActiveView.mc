@@ -53,7 +53,6 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
     var activityColor;
     var activityProgressGoalColor;
     var activityReachedGoalColor;
-    var distanceUnit;
     var dateColor;
     var ticksColor;
     var ticks1MinWidth;
@@ -196,7 +195,6 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
         secondHandLength = app.getProperty("secondHandLength");
         handsTailLength = app.getProperty("handsTailLength");
         activityColor = app.getProperty("activityColor");
-        distanceUnit = app.getProperty("distanceUnit");
         dateColor = app.getProperty("dateColor");
         arcPenWidth = app.getProperty("indicatorWidth");
         showZero = app.getProperty("showZero");
@@ -344,7 +342,7 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
         if (distance == null) {
             distance = 0;
         } else {
-            if (distanceUnit == 2) {
+            if (deviceSettings.distanceUnits == System.UNIT_STATUTE) {
                 distance = distance/1.609344;
             }
             distance = (distance/100000.0).format("%.2f");

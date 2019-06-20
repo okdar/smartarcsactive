@@ -38,7 +38,6 @@
         <property id="activityColor" type="number">0xAAAAAA</property>
         <property id="activityProgressGoalColor" type="number">0x00FF00</property>
         <property id="activityReachedGoalColor" type="number">0x00AA00</property>
-        <property id="distanceUnit" type="number">1</property>
         <property id="showZero" type="boolean">false</property>
 
         <property id="dateFormat" type="number">1</property>
@@ -77,7 +76,7 @@ Background color</string>
         <string id="handsTailLengthError">Value range: 0 to 30</string>
         <string id="useBatterySecondHandColor">Use battery status colors for second hand (overrides battery color settings below)</string>
         <string id="secondHandColor">Second hand color</string>
-        <string id="handsOnTop">Draw hands on top of time infos</string>
+        <string id="handsOnTop">Draw hands on top of activity indicators</string>
 
         <string id="oneColor">One color for all indicators (off or color; color overrides indicator color settings below)</string>
         <string id="indicatorWidth">
@@ -107,9 +106,6 @@ ACTIVITY INDICATORS
 Activity text color</string>
         <string id="activityProgressGoalColor">Progress towards the goal indicator color</string>
         <string id="activityReachedGoalColor">Reached goal indicator color</string>
-        <string id="distanceUnit">Distance unit</string>
-        <string id="distanceUnitKm">kilometers</string>
-        <string id="distanceUnitMi">miles</string>
         <string id="showZero">Show activities with 'zero' value</string>
 
         <string id="dateColor">Date color (off or color)</string>
@@ -492,6 +488,7 @@ Activity text color</string>
                 <listEntry value="0xFF00FF">@Strings.pink</listEntry>
             </settingConfig>
         </setting>
+
         <setting propertyKey="@Properties.activityProgressGoalColor" title="@Strings.activityProgressGoalColor">
             <settingConfig type="list">
                 <listEntry value="0xFFFFFF">@Strings.white</listEntry>
@@ -510,6 +507,7 @@ Activity text color</string>
                 <listEntry value="0xFF00FF">@Strings.pink</listEntry>
             </settingConfig>
         </setting>
+
         <setting propertyKey="@Properties.activityReachedGoalColor" title="@Strings.activityReachedGoalColor">
             <settingConfig type="list">
                 <listEntry value="0xFFFFFF">@Strings.white</listEntry>
@@ -528,12 +526,7 @@ Activity text color</string>
                 <listEntry value="0xFF00FF">@Strings.pink</listEntry>
             </settingConfig>
         </setting>
-        <setting propertyKey="@Properties.distanceUnit" title="@Strings.distanceUnit">
-            <settingConfig type="list">
-                <listEntry value="1">@Strings.distanceUnitKm</listEntry>
-                <listEntry value="2">@Strings.distanceUnitMi</listEntry>
-            </settingConfig>
-        </setting>
+
         <setting propertyKey="@Properties.showZero" title="@Strings.showZero">
             <settingConfig type="boolean"/>
         </setting>
