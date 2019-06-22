@@ -36,8 +36,8 @@
         <property id="alarmColor" type="number">0xFFAA00</property>
 
         <property id="activityColor" type="number">0xAAAAAA</property>
-        <property id="activityProgressGoalColor" type="number">0x00FF00</property>
-        <property id="activityReachedGoalColor" type="number">0x00AA00</property>
+        <property id="activityProgressGoalColor" type="number">0xFFAA00</property>
+        <property id="activityReachedGoalColor" type="number">0x00FF00</property>
         <property id="showZero" type="boolean">false</property>
 
         <property id="dateFormat" type="number">1</property>
