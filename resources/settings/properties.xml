@@ -114,7 +114,7 @@ Activity text color</string>
         <string id="dateFormat2">Day DayOfWeek</string>
         <string id="dateFormat3">Day Month</string>
         <string id="dateFormat4">Month Day</string>
-        <string id="dateFormat5">Day</string>
+        <string id="dateFormat0">Day</string>
 
         <string id="white">White</string>
         <string id="ltGray">Light gray</string>
@@ -462,11 +462,11 @@ Activity text color</string>
         </setting>
         <setting propertyKey="@Properties.dateFormat" title="@Strings.dateFormat">
             <settingConfig type="list">
+                <listEntry value="0">@Strings.dateFormat0</listEntry>
                 <listEntry value="1">@Strings.dateFormat1</listEntry>
                 <listEntry value="2">@Strings.dateFormat2</listEntry>
                 <listEntry value="3">@Strings.dateFormat3</listEntry>
                 <listEntry value="4">@Strings.dateFormat4</listEntry>
-                <listEntry value="5">@Strings.dateFormat5</listEntry>
             </settingConfig>
         </setting>
 

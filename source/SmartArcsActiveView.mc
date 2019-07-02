@@ -385,7 +385,7 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
 
             if (activity1 > 0) {
                 var endAngle = (startActivityAngle + ((activity1/goal.toFloat()) * 210));
-                if (endAngle > endActivityAngle) {
+                if (endAngle >= endActivityAngle) {
                     endAngle = endActivityAngle;
                     dc.setColor(activityReachedGoalColor, Graphics.COLOR_TRANSPARENT);
                 } else if (endAngle.toNumber() == startActivityAngle) {
