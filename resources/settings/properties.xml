@@ -1,3 +1,21 @@
+<!--
+    This file is part of SmartArcs Active watch face.
+    https://github.com/okdar/smartarcs
+
+    SmartArcs Active is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    SmartArcs Active is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with SmartArcs Active. If not, see <https://www.gnu.org/licenses/gpl.html>.
+-->
+
 <resources>
 
     <properties>
@@ -6,24 +24,17 @@
         <property id="ticks1MinWidth" type="number">0</property>
         <property id="ticks5MinWidth" type="number">3</property>
         <property id="ticks15MinWidth" type="number">3</property>
-        <property id="ticks1MinLength" type="number">10</property>
-        <property id="ticks5MinLength" type="number">20</property>
-        <property id="ticks15MinLength" type="number">20</property>
         <property id="handsColor" type="number">0xFFFFFF</property>
         <property id="handsOutlineColor" type="number">-999</property>
         <property id="hourHandWidth" type="number">4</property>
         <property id="minuteHandWidth" type="number">4</property>
-        <property id="secondHandWidth" type="number">0</property>
-        <property id="hourHandLength" type="number">70</property>
-        <property id="minuteHandLength" type="number">90</property>
-        <property id="secondHandLength" type="number">100</property>
-        <property id="handsTailLength" type="number">15</property>
+        <property id="secondHandWidth" type="number">2</property>
         <property id="useBatterySecondHandColor" type="boolean">false</property>
         <property id="secondHandColor" type="number">0x00FF00</property>
         <property id="handsOnTop" type="boolean">false</property>
+        <property id="showSecondHand" type="number">0</property>
 
         <property id="oneColor" type="number">-999</property>
-        <property id="indicatorWidth" type="number">10</property>
 
         <property id="showBatteryIndicator" type="boolean">true</property>
         <property id="battery100Color" type="number">0x00FF00</property>
@@ -45,46 +56,29 @@
     </properties>
 
     <strings>
-        <string id="bgColor">
-=================================
-HANDS AND TICKS
-=================================
-Background color</string>
+        <string id="bgColor">Background color</string>
         <string id="ticksColor">Ticks color (off or color)</string>
         <string id="ticks1MinWidth">1-minute ticks width</string>
         <string id="ticks5MinWidth">5-minute ticks width</string>
         <string id="ticks15MinWidth">Quarter ticks width</string>
-        <string id="ticks1MinLength">1-minute ticks length</string>
-        <string id="ticks5MinLength">5-minute ticks length</string>
-        <string id="ticks15MinLength">Quarter ticks length</string>
         <string id="ticks1MinError">Value range: 0 to 5</string>
         <string id="ticks5MinError">Value range: 0 to 10</string>
-        <string id="ticksLengthError">Value range: 0 to 20</string>
         <string id="handsColor">Hands color</string>
         <string id="handsOutlineColor">Hands outline color (off or color)</string>
         <string id="hourHandWidth">Hour hand width</string>
         <string id="minuteHandWidth">Minute hand width</string>
         <string id="secondHandWidth">Second hand width (shown only when the watch is awake)</string>
-        <string id="hourHandLength">Hour hand length</string>
-        <string id="minuteHandLength">Minute hand length</string>
-        <string id="secondHandLength">Second hand length (shown only when the watch is awake)</string>
-        <string id="handsTailLength">Hands tail length</string>
         <string id="handWidthError">Value range: 1 to 10</string>
         <string id="secondHandWidthError">Value range: 0 to 10</string>
-        <string id="handLengthError">Value range: 10 to 100</string>
-        <string id="secondHandLengthError">Value range: 0 to 100</string>
-        <string id="handsTailLengthError">Value range: 0 to 30</string>
         <string id="useBatterySecondHandColor">Use battery status colors for second hand (overrides battery color settings below)</string>
         <string id="secondHandColor">Second hand color</string>
         <string id="handsOnTop">Draw hands on top of activity indicators</string>
+        <string id="showSecondHand">Show second hand</string>
+        <string id="secondHandNever">Never</string>
+        <string id="secondHandAwake">When awake</string>
+        <string id="secondHandAlways">Always</string>
 
         <string id="oneColor">One color for all indicators (off or color; color overrides indicator color settings below)</string>
-        <string id="indicatorWidth">
-=================================
-SMART INDICATORS
-=================================
-Indicators width</string>
-        <string id="indicatorWidthError">Value range: 1 to 20</string>
 
         <string id="showBatteryIndicator">Show battery indicator</string>
         <string id="battery100Color">Battery 100%-30% color</string>
@@ -99,11 +93,7 @@ Indicators width</string>
 
         <string id="alarmColor">Alarm indicator color (off or color)</string>
 
-        <string id="activityColor">
-=================================
-ACTIVITY INDICATORS
-=================================
-Activity text color</string>
+        <string id="activityColor">Activity text color</string>
         <string id="activityProgressGoalColor">Progress towards the goal indicator color</string>
         <string id="activityReachedGoalColor">Reached goal indicator color</string>
         <string id="showZero">Show activities with 'zero' value</string>
@@ -176,20 +166,11 @@ Activity text color</string>
         <setting propertyKey="@Properties.ticks1MinWidth" title="@Strings.ticks1MinWidth">
             <settingConfig type="numeric" min="0" max="5" errorMessage="@Strings.ticks1MinError"/>
         </setting>
-        <setting propertyKey="@Properties.ticks1MinLength" title="@Strings.ticks1MinLength">
-            <settingConfig type="numeric" min="0" max="20" errorMessage="@Strings.ticksLengthError"/>
-        </setting>
         <setting propertyKey="@Properties.ticks5MinWidth" title="@Strings.ticks5MinWidth">
             <settingConfig type="numeric" min="0" max="10" errorMessage="@Strings.ticks5MinError"/>
         </setting>
-        <setting propertyKey="@Properties.ticks5MinLength" title="@Strings.ticks5MinLength">
-            <settingConfig type="numeric" min="0" max="20" errorMessage="@Strings.ticksLengthError"/>
-        </setting>
         <setting propertyKey="@Properties.ticks15MinWidth" title="@Strings.ticks15MinWidth">
             <settingConfig type="numeric" min="0" max="10" errorMessage="@Strings.ticks5MinError"/>
-        </setting>
-        <setting propertyKey="@Properties.ticks15MinLength" title="@Strings.ticks15MinLength">
-            <settingConfig type="numeric" min="0" max="20" errorMessage="@Strings.ticksLengthError"/>
         </setting>
 
         <setting propertyKey="@Properties.handsColor" title="@Strings.handsColor">
@@ -232,29 +213,23 @@ Activity text color</string>
         <setting propertyKey="@Properties.hourHandWidth" title="@Strings.hourHandWidth">
             <settingConfig type="numeric" min="1" max="10" errorMessage="@Strings.handWidthError"/>
         </setting>
-        <setting propertyKey="@Properties.hourHandLength" title="@Strings.hourHandLength">
-            <settingConfig type="numeric" min="10" max="100" errorMessage="@Strings.handLengthError"/>
-        </setting>
         <setting propertyKey="@Properties.minuteHandWidth" title="@Strings.minuteHandWidth">
             <settingConfig type="numeric" min="1" max="10" errorMessage="@Strings.handWidthError"/>
         </setting>
-        <setting propertyKey="@Properties.minuteHandLength" title="@Strings.minuteHandLength">
-            <settingConfig type="numeric" min="10" max="100" errorMessage="@Strings.handLengthError"/>
-        </setting>
-        <setting propertyKey="@Properties.secondHandWidth" title="@Strings.secondHandWidth">
-            <settingConfig type="numeric" min="0" max="10" errorMessage="@Strings.secondHandWidthError"/>
-        </setting>
-        <setting propertyKey="@Properties.secondHandLength" title="@Strings.secondHandLength">
-            <settingConfig type="numeric" min="0" max="100" errorMessage="@Strings.secondHandLengthError"/>
-        </setting>
-        <setting propertyKey="@Properties.handsTailLength" title="@Strings.handsTailLength">
-            <settingConfig type="numeric" min="0" max="30" errorMessage="@Strings.handsTailLengthError"/>
-        </setting>
-
         <setting propertyKey="@Properties.handsOnTop" title="@Strings.handsOnTop">
             <settingConfig type="boolean"/>
         </setting>
 
+        <setting propertyKey="@Properties.showSecondHand" title="@Strings.showSecondHand">
+            <settingConfig type="list">
+                <listEntry value="0">@Strings.secondHandNever</listEntry>
+                <listEntry value="1">@Strings.secondHandAwake</listEntry>
+                <listEntry value="2">@Strings.secondHandAlways</listEntry>
+            </settingConfig>
+        </setting>
+        <setting propertyKey="@Properties.secondHandWidth" title="@Strings.secondHandWidth">
+            <settingConfig type="numeric" min="0" max="10" errorMessage="@Strings.secondHandWidthError"/>
+        </setting>
         <setting propertyKey="@Properties.useBatterySecondHandColor" title="@Strings.useBatterySecondHandColor">
             <settingConfig type="boolean"/>
         </setting>
@@ -275,10 +250,6 @@ Activity text color</string>
                 <listEntry value="0xAA00FF">@Strings.purple</listEntry>
                 <listEntry value="0xFF00FF">@Strings.pink</listEntry>
             </settingConfig>
-        </setting>
-
-        <setting propertyKey="@Properties.indicatorWidth" title="@Strings.indicatorWidth">
-            <settingConfig type="numeric" min="1" max="20" errorMessage="@Strings.indicatorWidthError"/>
         </setting>
 
         <setting propertyKey="@Properties.oneColor" title="@Strings.oneColor">
