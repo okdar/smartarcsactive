@@ -1,3 +1,8 @@
+# 1.1.0 (September 6, 2019)
+* always on second hand
+* simplified settings
+* bugfixes
+
 # 1.0.2 (July 2, 2019)
 * small bugfixes
 
