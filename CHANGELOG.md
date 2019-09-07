@@ -1,3 +1,6 @@
+# 1.1.1 (September 7, 2019)
+* hotfix for Forerunner® 245 (does not support floors)
+
 # 1.1.0 (September 6, 2019)
 * always on second hand
 * simplified settings
