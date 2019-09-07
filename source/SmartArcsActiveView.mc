@@ -174,7 +174,9 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
         }
 
         drawSteps(targetDc, activityInfo.steps, activityInfo.stepGoal, activityInfo.distance, deviceSettings.distanceUnits);
-        drawFloors(targetDc, activityInfo.floorsClimbed, activityInfo.floorsDescended, activityInfo.floorsClimbedGoal);
+        if (Toybox.ActivityMonitor.Info has :floorsClimbed) {
+            drawFloors(targetDc, activityInfo.floorsClimbed, activityInfo.floorsDescended, activityInfo.floorsClimbedGoal);
+        }
 
         if (handsOnTop) {
             drawHands(targetDc, System.getClockTime());
