@@ -1,8 +1,11 @@
+# 1.2.0 (November 1, 2019)
+* optional heart rate
+
 # 1.1.1 (September 7, 2019)
 * hotfix for Forerunner® 245 (does not support floors)
 
 # 1.1.0 (September 6, 2019)
-* always on second hand
+* optional 'always on' second hand
 * simplified settings
 * bugfixes
 

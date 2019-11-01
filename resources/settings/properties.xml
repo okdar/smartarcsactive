@@ -53,6 +53,9 @@
 
         <property id="dateFormat" type="number">1</property>
         <property id="dateColor" type="number">0xAAAAAA</property>
+
+        <property id="hrColor" type="number">0xAAAAAA</property>
+        <property id="hrRefreshInterval" type="number">3</property>
     </properties>
 
     <strings>
@@ -73,7 +76,7 @@
         <string id="useBatterySecondHandColor">Use battery status colors for second hand (overrides battery color settings below)</string>
         <string id="secondHandColor">Second hand color</string>
         <string id="handsOnTop">Draw hands on top of activity indicators</string>
-        <string id="showSecondHand">Show second hand</string>
+        <string id="showSecondHand">Show second hand (if heart rate is enabled 'Always' setting is not applied, 'When awake' is used instead)</string>
         <string id="secondHandNever">Never</string>
         <string id="secondHandAwake">When awake</string>
         <string id="secondHandAlways">Always</string>
@@ -122,6 +125,14 @@
         <string id="pink">Pink</string>
 
         <string id="off">- Off -</string>
+
+        <string id="hrColor">Heart rate color (off or color; 'Always' second hand setting is not applied if heart rate is enabled, 'When awake' is used instead)</string>
+        <string id="hrRefreshInterval">Heart rate refresh interval (seconds)</string>
+        <string id="hr1">1</string>
+        <string id="hr2">2</string>
+        <string id="hr3">3</string>
+        <string id="hr5">5</string>
+        <string id="hr10">10</string>
     </strings>
 
     <settings>
@@ -500,6 +511,35 @@
 
         <setting propertyKey="@Properties.showZero" title="@Strings.showZero">
             <settingConfig type="boolean"/>
+        </setting>
+
+        <setting propertyKey="@Properties.hrColor" title="@Strings.hrColor">
+            <settingConfig type="list">
+                <listEntry value="-999">@Strings.off</listEntry>
+                <listEntry value="0xFFFFFF">@Strings.white</listEntry>
+                <listEntry value="0xAAAAAA">@Strings.ltGray</listEntry>
+                <listEntry value="0x555555">@Strings.dkGray</listEntry>
+                <listEntry value="0x000000">@Strings.black</listEntry>
+                <listEntry value="0xFF0000">@Strings.red</listEntry>
+                <listEntry value="0xAA0000">@Strings.dkRed</listEntry>
+                <listEntry value="0xFF5500">@Strings.orange</listEntry>
+                <listEntry value="0xFFAA00">@Strings.yellow</listEntry>
+                <listEntry value="0x00FF00">@Strings.green</listEntry>
+                <listEntry value="0x00AA00">@Strings.dkGreen</listEntry>
+                <listEntry value="0x00AAFF">@Strings.blue</listEntry>
+                <listEntry value="0x0000FF">@Strings.dkBlue</listEntry>
+                <listEntry value="0xAA00FF">@Strings.purple</listEntry>
+                <listEntry value="0xFF00FF">@Strings.pink</listEntry>
+            </settingConfig>
+        </setting>
+        <setting propertyKey="@Properties.hrRefreshInterval" title="@Strings.hrRefreshInterval">
+            <settingConfig type="list">
+                <listEntry value="1">@Strings.hr1</listEntry>
+                <listEntry value="2">@Strings.hr2</listEntry>
+                <listEntry value="3">@Strings.hr3</listEntry>
+                <listEntry value="5">@Strings.hr5</listEntry>
+                <listEntry value="10">@Strings.hr10</listEntry>
+            </settingConfig>
         </setting>
     </settings>
 
