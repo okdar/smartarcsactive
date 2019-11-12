@@ -1,3 +1,6 @@
+# 1.2.1 (November 12, 2019)
+* watch face available for models: Captain Marvel, fēnix® 6, fēnix® 6 Pro / 6 Sapphire, fēnix® 6s, fēnix® 6S Pro / 6S Sapphire, First Avenger, Venu™, vívoactive® 4, vívoactive® 4S
+
 # 1.2.0 (November 1, 2019)
 * optional heart rate
 
