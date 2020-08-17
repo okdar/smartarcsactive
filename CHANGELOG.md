@@ -1,3 +1,6 @@
+# 1.2.2 (August 17, 2020)
+* watch face available for models: Approach® S62, Darth Vader™, MARQ™ Adventurer, MARQ™ Commander, MARQ™ Golfer, Mercedes-Benz Venu®, Rey™, fēnix® 6X Pro, fēnix® 6X Sapphire, fēnix® 6X Pro Solar, tactix® Delta Sapphire, quatix® 6X
+
 # 1.2.1 (November 12, 2019)
 * watch face available for models: Captain Marvel, fēnix® 6, fēnix® 6 Pro / 6 Sapphire, fēnix® 6s, fēnix® 6S Pro / 6S Sapphire, First Avenger, Venu™, vívoactive® 4, vívoactive® 4S
 
