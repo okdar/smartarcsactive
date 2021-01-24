@@ -1,3 +1,6 @@
+# 1.3.0 (January 24, 2021)
+* power saver
+
 # 1.2.3 (December 22, 2020)
 * watch face available for models: D2™ Air, Descent™ Mk2 / Descent™ Mk2i, Forerunner® 745, Venu® Sq. Music Edition
 
