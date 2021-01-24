@@ -1,3 +1,6 @@
+# 1.3.1 (January 24, 2021)
+* copy/paste fix
+
 # 1.3.0 (January 24, 2021)
 * power saver
 
