@@ -364,12 +364,6 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
             powerSaverIconRatio = 0.6 * handLengthCorrection; //small icon
         }
 
-        if (!((ticksColor == offSettingFlag) ||
-            (ticksColor != offSettingFlag && ticks1MinWidth == 0 && ticks5MinWidth == 0 && ticks15MinWidth == 0))) {
-            //array of ticks coordinates
-            computeTicks();
-        }
-
         //Y coordinates of activities
         halfFontHeight = Graphics.getFontHeight(font) / 2;
         activity1Y = screenRadius + 10;
