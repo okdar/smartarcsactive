@@ -1,5 +1,5 @@
 # 1.3.2 (April 9, 2021)
-* watch face available Enduro™
+* watch face available for Enduro™
 
 # 1.3.1 (January 24, 2021)
 * copy/paste fix
