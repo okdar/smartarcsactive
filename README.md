@@ -8,6 +8,7 @@ Arc indicators around the screen display:
 * Bluetooth status
 * do not disturb status
 * number of alarms. First alarm is displayed as five minutes arc, each other as one minute arc.
+* twilights
 * 'always on' second hand
 
 Activity indicators on the screen display:
