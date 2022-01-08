@@ -64,12 +64,11 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
     var halfHRTextWidth;
     var startPowerSaverMin;
     var endPowerSaverMin;
-    var screenResolutionRatio;
     var powerSaverIconRatio;
-	var sunriseStartAngle;
-	var sunriseEndAngle;
-	var sunsetStartAngle;
-	var sunsetEndAngle;
+	var sunriseStartAngle = 0;
+	var sunriseEndAngle = 0;
+	var sunsetStartAngle = 0;
+	var sunsetEndAngle = 0;
 
     //user settings
     var bgColor;
@@ -160,10 +159,10 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
         //compute what does not need to be computed on each update
         if (precompute) {
             computeConstants(dc);
-			computeSunConstants();
         }
 
-		if ((clockTime.hour % 4 == 0) && clockTime.min == 0) {
+		//recompute sunrise/sunset constants every hour - to address new location when traveling
+		if (clockTime.min == 0) {
 			computeSunConstants();
 		}
 
@@ -392,6 +391,8 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
 
         hrTextDimension = dc.getTextDimensions("888", Graphics.FONT_TINY); //to compute correct clip boundaries
         halfHRTextWidth = hrTextDimension[0] / 2;
+
+		computeSunConstants();
 
         //constants pre-computed, doesn't need to be computed again
         precompute = false;
@@ -910,52 +911,38 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
     }
 
 	function computeSunConstants() {
-    	var sc = new SunCalc();
-    	var time_now = Time.now();
-    	
     	var posInfo = Toybox.Position.getInfo();
     	if (posInfo != null && posInfo.position != null) {
+	    	var sc = new SunCalc();
+	    	var time_now = Time.now();    	
 	    	var loc = posInfo.position.toRadians();		
-	    	var sunrise_time_civil = sc.calculate(time_now, loc, SunCalc.DAWN);
-	    	var sunrise_time = sc.calculate(time_now, loc, SunCalc.SUNRISE);
-			var sunset_time = sc.calculate(time_now, loc, SunCalc.SUNSET);
-			var sunset_time_civil = sc.calculate(time_now, loc, SunCalc.DUSK);
-			
-	        var timeInfo = Time.Gregorian.info(sunrise_time_civil, Time.FORMAT_SHORT);       
-	        sunriseStartAngle = ((timeInfo.hour % 12) * 60.0) + timeInfo.min;
-	        sunriseStartAngle = sunriseStartAngle / (12 * 60.0) * twoPI;
-	        sunriseStartAngle = -(sunriseStartAngle - Math.PI/2) * 180 / Math.PI;
-	        timeInfo = Time.Gregorian.info(sunrise_time, Time.FORMAT_SHORT);       
-	        sunriseEndAngle = ((timeInfo.hour % 12) * 60.0) + timeInfo.min;
-	        sunriseEndAngle = sunriseEndAngle / (12 * 60.0) * twoPI;
-	        sunriseEndAngle = -(sunriseEndAngle - Math.PI/2) * 180 / Math.PI;
-
-	        timeInfo = Time.Gregorian.info(sunset_time, Time.FORMAT_SHORT);       
-	        sunsetStartAngle = ((timeInfo.hour % 12) * 60.0) + timeInfo.min;
-	        sunsetStartAngle = sunsetStartAngle / (12 * 60.0) * twoPI;
-	        sunsetStartAngle = -(sunsetStartAngle - Math.PI/2) * 180 / Math.PI;
-	        timeInfo = Time.Gregorian.info(sunset_time_civil, Time.FORMAT_SHORT);       
-	        sunsetEndAngle = ((timeInfo.hour % 12) * 60.0) + timeInfo.min;
-	        sunsetEndAngle = sunsetEndAngle / (12 * 60.0) * twoPI;
-	        sunsetEndAngle = -(sunsetEndAngle - Math.PI/2) * 180 / Math.PI;
+	        sunriseStartAngle = computeSunAngle(sc.calculate(time_now, loc, SunCalc.DAWN));	        
+	        sunriseEndAngle = computeSunAngle(sc.calculate(time_now, loc, SunCalc.SUNRISE));
+	        sunsetStartAngle = computeSunAngle(sc.calculate(time_now, loc, SunCalc.SUNSET));
+	        sunsetEndAngle = computeSunAngle(sc.calculate(time_now, loc, SunCalc.DUSK));
         }
 	}
 
+	function computeSunAngle(time) {
+        var timeInfo = Time.Gregorian.info(time, Time.FORMAT_SHORT);       
+        var angle = ((timeInfo.hour % 12) * 60.0) + timeInfo.min;
+        angle = angle / (12 * 60.0) * twoPI;
+        return -(angle - Math.PI/2) * 180 / Math.PI;	
+	}
+
 	function drawSun(dc) {
-		if (sunriseStartAngle != null && sunriseEndAngle != null && sunsetStartAngle != null && sunsetEndAngle != null) {
-	        dc.setPenWidth(7);
-	
-	        //draw sunrise
-	        if (sunriseColor != offSettingFlag) {
-		        dc.setColor(sunriseColor, Graphics.COLOR_TRANSPARENT);
-				dc.drawArc(screenRadius, screenRadius, screenRadius - 17, Graphics.ARC_CLOCKWISE, sunriseStartAngle, sunriseEndAngle);
-			}
-	
-	        //draw sunset
-	        if (sunsetColor != offSettingFlag) {
-		        dc.setColor(sunsetColor, Graphics.COLOR_TRANSPARENT);
-				dc.drawArc(screenRadius, screenRadius, screenRadius - 13, Graphics.ARC_CLOCKWISE, sunsetStartAngle, sunsetEndAngle);
-			}
+        dc.setPenWidth(7);
+
+        //draw sunrise
+        if (sunriseColor != offSettingFlag) {
+	        dc.setColor(sunriseColor, Graphics.COLOR_TRANSPARENT);
+			dc.drawArc(screenRadius, screenRadius, screenRadius - 17, Graphics.ARC_CLOCKWISE, sunriseStartAngle, sunriseEndAngle);
+		}
+
+        //draw sunset
+        if (sunsetColor != offSettingFlag) {
+	        dc.setColor(sunsetColor, Graphics.COLOR_TRANSPARENT);
+			dc.drawArc(screenRadius, screenRadius, screenRadius - 13, Graphics.ARC_CLOCKWISE, sunsetStartAngle, sunsetEndAngle);
 		}
 	}
 	
