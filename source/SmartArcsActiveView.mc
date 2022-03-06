@@ -936,13 +936,21 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
         //draw sunrise
         if (sunriseColor != offSettingFlag) {
 	        dc.setColor(sunriseColor, Graphics.COLOR_TRANSPARENT);
-			dc.drawArc(screenRadius, screenRadius, screenRadius - 17, Graphics.ARC_CLOCKWISE, sunriseStartAngle, sunriseEndAngle);
+	        if (sunriseStartAngle > sunriseEndAngle) {
+				dc.drawArc(screenRadius, screenRadius, screenRadius - 17, Graphics.ARC_CLOCKWISE, sunriseStartAngle, sunriseEndAngle);
+			} else {
+				dc.drawArc(screenRadius, screenRadius, screenRadius - 17, Graphics.ARC_COUNTER_CLOCKWISE, sunriseStartAngle, sunriseEndAngle);
+			}
 		}
 
         //draw sunset
         if (sunsetColor != offSettingFlag) {
 	        dc.setColor(sunsetColor, Graphics.COLOR_TRANSPARENT);
-			dc.drawArc(screenRadius, screenRadius, screenRadius - 13, Graphics.ARC_CLOCKWISE, sunsetStartAngle, sunsetEndAngle);
+	        if (sunsetStartAngle > sunsetEndAngle) {
+				dc.drawArc(screenRadius, screenRadius, screenRadius - 13, Graphics.ARC_CLOCKWISE, sunsetStartAngle, sunsetEndAngle);
+			} else {
+				dc.drawArc(screenRadius, screenRadius, screenRadius - 13, Graphics.ARC_COUNTER_CLOCKWISE, sunsetStartAngle, sunsetEndAngle);
+			}
 		}
 	}
 	
