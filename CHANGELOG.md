@@ -1,3 +1,6 @@
+# 1.5.1 (October 13, 2022)
+* under the hood optimization
+
 # 1.5.0 (April 28, 2022)
 * 64 colors support
 
