@@ -231,7 +231,9 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
             }
         }
 
-    	drawSun(targetDc);
+        if (locationLatitude != offSettingFlag) {
+    	    drawSun(targetDc);
+        }
 
         if (ticks != null) {
             drawTicks(targetDc);
@@ -921,7 +923,7 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
         dc.setPenWidth(7);
 
         //draw sunrise
-        if (sunriseColor != offSettingFlag && locationLatitude != offSettingFlag) {
+        if (sunriseColor != offSettingFlag) {
 	        dc.setColor(sunriseColor, Graphics.COLOR_TRANSPARENT);
 	        if (sunriseStartAngle > sunriseEndAngle) {
 				dc.drawArc(screenRadius, screenRadius, screenRadius - 17, Graphics.ARC_CLOCKWISE, sunriseStartAngle, sunriseEndAngle);
@@ -931,7 +933,7 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
 		}
 
         //draw sunset
-        if (sunsetColor != offSettingFlag && locationLatitude != offSettingFlag) {
+        if (sunsetColor != offSettingFlag) {
 	        dc.setColor(sunsetColor, Graphics.COLOR_TRANSPARENT);
 	        if (sunsetStartAngle > sunsetEndAngle) {
 				dc.drawArc(screenRadius, screenRadius, screenRadius - sunArcsOffset, Graphics.ARC_CLOCKWISE, sunsetStartAngle, sunsetEndAngle);
