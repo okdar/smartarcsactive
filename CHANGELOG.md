@@ -1,3 +1,6 @@
+# 1.5.2 (June 24, 2023)
+* twilights indicator redesign
+
 # 1.5.1 (October 13, 2022)
 * under the hood optimization
 

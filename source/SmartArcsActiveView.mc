@@ -905,9 +905,9 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
                     ((sunriseEndAngle < sunsetStartAngle) && (sunriseEndAngle > sunsetEndAngle)) ||
                     ((sunsetStartAngle < sunriseStartAngle) && (sunsetStartAngle > sunriseEndAngle)) ||
                     ((sunsetEndAngle < sunriseStartAngle) && (sunsetEndAngle > sunriseEndAngle))) {
-                sunArcsOffset = 13;
+                sunArcsOffset = 10;
             } else {
-                sunArcsOffset = 17;
+                sunArcsOffset = 12;
             }
         }
 	}
@@ -916,31 +916,48 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
         var timeInfo = Time.Gregorian.info(time, Time.FORMAT_SHORT);       
         var angle = ((timeInfo.hour % 12) * 60.0) + timeInfo.min;
         angle = angle / (12 * 60.0) * Math.PI * 2;
-        return -(angle - Math.PI/2) * 180 / Math.PI;	
+        return Math.toDegrees(-angle + Math.PI/2);	
 	}
 
 	function drawSun(dc) {
-        dc.setPenWidth(7);
+        dc.setPenWidth(1);
+
+        var arcWidth = 9;
+        if (sunArcsOffset == 10) {
+            arcWidth = 7;
+        }
 
         //draw sunrise
         if (sunriseColor != offSettingFlag) {
-	        dc.setColor(sunriseColor, Graphics.COLOR_TRANSPARENT);
 	        if (sunriseStartAngle > sunriseEndAngle) {
-				dc.drawArc(screenRadius, screenRadius, screenRadius - 17, Graphics.ARC_CLOCKWISE, sunriseStartAngle, sunriseEndAngle);
+    	        dc.setColor(sunriseColor, Graphics.COLOR_TRANSPARENT);
+                var step = (sunriseStartAngle - sunriseEndAngle) / arcWidth;
+                for (var i = 0; i < arcWidth; i++) {
+                    if (sunArcsOffset == 10) {
+				        dc.drawArc(screenRadius, screenRadius, screenRadius - 20 + i, Graphics.ARC_CLOCKWISE, sunriseStartAngle - (step * i), sunriseEndAngle);
+                    } else {
+				        dc.drawArc(screenRadius, screenRadius, screenRadius - 12 - i, Graphics.ARC_CLOCKWISE, sunriseStartAngle - (step * i), sunriseEndAngle);
+                    }
+                }
 			} else {
-				dc.drawArc(screenRadius, screenRadius, screenRadius - 17, Graphics.ARC_COUNTER_CLOCKWISE, sunriseStartAngle, sunriseEndAngle);
+		        dc.setColor(sunriseColor, Graphics.COLOR_TRANSPARENT);
+    			dc.drawArc(screenRadius, screenRadius, screenRadius - 17, Graphics.ARC_COUNTER_CLOCKWISE, sunriseStartAngle, sunriseEndAngle);
 			}
 		}
 
         //draw sunset
         if (sunsetColor != offSettingFlag) {
-	        dc.setColor(sunsetColor, Graphics.COLOR_TRANSPARENT);
 	        if (sunsetStartAngle > sunsetEndAngle) {
-				dc.drawArc(screenRadius, screenRadius, screenRadius - sunArcsOffset, Graphics.ARC_CLOCKWISE, sunsetStartAngle, sunsetEndAngle);
+    	        dc.setColor(sunsetColor, Graphics.COLOR_TRANSPARENT);
+                var step = (sunsetStartAngle - sunsetEndAngle) / arcWidth;
+                for (var i = 0; i < arcWidth; i++) {
+				    dc.drawArc(screenRadius, screenRadius, screenRadius - sunArcsOffset - i, Graphics.ARC_CLOCKWISE, sunsetStartAngle, sunsetEndAngle + (step * i));
+                }
 			} else {
+    	        dc.setColor(sunsetColor, Graphics.COLOR_TRANSPARENT);
 				dc.drawArc(screenRadius, screenRadius, screenRadius - sunArcsOffset, Graphics.ARC_COUNTER_CLOCKWISE, sunsetStartAngle, sunsetEndAngle);
 			}
 		}
 	}
-	
+
 }
