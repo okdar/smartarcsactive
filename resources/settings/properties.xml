@@ -28,11 +28,7 @@
         <property id="handsOutlineColor" type="number">-999</property>
         <property id="hourHandWidth" type="number">4</property>
         <property id="minuteHandWidth" type="number">4</property>
-        <property id="secondHandWidth" type="number">2</property>
-        <property id="useBatterySecondHandColor" type="boolean">false</property>
-        <property id="secondHandColor" type="number">0x00FF00</property>
         <property id="handsOnTop" type="boolean">false</property>
-        <property id="showSecondHand" type="number">0</property>
 
         <property id="oneColor" type="number">-999</property>
 
@@ -55,6 +51,11 @@
         <property id="activityProgressGoalColor" type="number">0xFFAA00</property>
         <property id="activityReachedGoalColor" type="number">0x00FF00</property>
         <property id="showZero" type="boolean">false</property>
+
+        <property id="showBb" type="boolean">true</property>
+        <property id="showStress" type="boolean">true</property>
+        <property id="bbStressArcColor" type="number">0x00FF00</property>
+        <property id="bbStressWarningArcColor" type="number">0xFF0000</property>
 
         <property id="dateFormat" type="number">1</property>
         <property id="dateColor" type="number">0xAAAAAA</property>
@@ -81,16 +82,8 @@
         <string id="handsOutlineColor">Hands outline color (off or color)</string>
         <string id="hourHandWidth">Hour hand width</string>
         <string id="minuteHandWidth">Minute hand width</string>
-        <string id="secondHandWidth">Second hand width (shown only when the watch is awake)</string>
         <string id="handWidthError">Value range: 1 to 10</string>
-        <string id="secondHandWidthError">Value range: 0 to 10</string>
-        <string id="useBatterySecondHandColor">Use battery status colors for second hand (overrides second hand color setting below)</string>
-        <string id="secondHandColor">Second hand color</string>
         <string id="handsOnTop">Draw hands on top of activity indicators</string>
-        <string id="showSecondHand">Show second hand (if heart rate is enabled 'Always' setting is not applied, 'When awake' is used instead)</string>
-        <string id="secondHandNever">Never</string>
-        <string id="secondHandAwake">When awake</string>
-        <string id="secondHandAlways">Always</string>
 
         <string id="oneColor">One color for all indicators (off or color; color overrides indicator color settings below)</string>
 
@@ -114,6 +107,11 @@
         <string id="activityProgressGoalColor">Progress towards the goal indicator color</string>
         <string id="activityReachedGoalColor">Reached goal indicator color</string>
         <string id="showZero">Show activities with 'zero' value</string>
+
+        <string id="showBb">Show body battery</string>
+        <string id="showStress">Show stress</string>
+        <string id="bbStressArcColor">Body battery and stress color</string>
+        <string id="bbStressWarningArcColor">Body battery (under 25%) and stress (above 75%) warning color</string>
 
         <string id="dateColor">Date color (off or color)</string>
         <string id="dateFormat">Date format</string>
@@ -190,7 +188,7 @@
 
         <string id="off">- Off -</string>
 
-        <string id="hrColor">Heart rate color (off or color; 'Always' second hand setting is not applied if heart rate is enabled, 'When awake' is used instead)</string>
+        <string id="hrColor">Heart rate color (off or color)</string>
         <string id="hrRefreshInterval">Heart rate refresh interval (seconds)</string>
         <string id="hr1">1</string>
         <string id="hr2">2</string>
@@ -506,88 +504,6 @@
         </setting>
         <setting propertyKey="@Properties.handsOnTop" title="@Strings.handsOnTop">
             <settingConfig type="boolean"/>
-        </setting>
-
-        <setting propertyKey="@Properties.showSecondHand" title="@Strings.showSecondHand">
-            <settingConfig type="list">
-                <listEntry value="0">@Strings.secondHandNever</listEntry>
-                <listEntry value="1">@Strings.secondHandAwake</listEntry>
-                <listEntry value="2">@Strings.secondHandAlways</listEntry>
-            </settingConfig>
-        </setting>
-        <setting propertyKey="@Properties.secondHandWidth" title="@Strings.secondHandWidth">
-            <settingConfig type="numeric" min="0" max="10" errorMessage="@Strings.secondHandWidthError"/>
-        </setting>
-        <setting propertyKey="@Properties.useBatterySecondHandColor" title="@Strings.useBatterySecondHandColor">
-            <settingConfig type="boolean"/>
-        </setting>
-        <setting propertyKey="@Properties.secondHandColor" title="@Strings.secondHandColor">
-            <settingConfig type="list">
-                <listEntry value="0xFFFFFF">@Strings.white</listEntry>
-                <listEntry value="0xAAAAAA">@Strings.ltGray</listEntry>
-                <listEntry value="0x555555">@Strings.dkGray</listEntry>
-                <listEntry value="0x000000">@Strings.black</listEntry>
-                <listEntry value="0xFF0000">@Strings.red</listEntry>
-                <listEntry value="0xAA0000">@Strings.dkRed</listEntry>
-                <listEntry value="0xFF5500">@Strings.orange</listEntry>
-                <listEntry value="0xFFAA00">@Strings.yellow</listEntry>
-                <listEntry value="0x00FF00">@Strings.green</listEntry>
-                <listEntry value="0x00AA00">@Strings.dkGreen</listEntry>
-                <listEntry value="0x00AAFF">@Strings.blue</listEntry>
-                <listEntry value="0x0000FF">@Strings.dkBlue</listEntry>
-                <listEntry value="0xAA00FF">@Strings.purple</listEntry>
-                <listEntry value="0xFF00FF">@Strings.pink</listEntry>
-				<listEntry value="0x000055">@Strings.c_000055</listEntry>
-				<listEntry value="0x0000aa">@Strings.c_0000aa</listEntry>
-				<listEntry value="0x005500">@Strings.c_005500</listEntry>
-				<listEntry value="0x005555">@Strings.c_005555</listEntry>
-				<listEntry value="0x0055aa">@Strings.c_0055aa</listEntry>
-				<listEntry value="0x0055ff">@Strings.c_0055ff</listEntry>
-				<listEntry value="0x00aa55">@Strings.c_00aa55</listEntry>
-				<listEntry value="0x00aaaa">@Strings.c_00aaaa</listEntry>
-				<listEntry value="0x00ff55">@Strings.c_00ff55</listEntry>
-				<listEntry value="0x00ffaa">@Strings.c_00ffaa</listEntry>
-				<listEntry value="0x00ffff">@Strings.c_00ffff</listEntry>
-				<listEntry value="0x550000">@Strings.c_550000</listEntry>
-				<listEntry value="0x550055">@Strings.c_550055</listEntry>
-				<listEntry value="0x5500aa">@Strings.c_5500aa</listEntry>
-				<listEntry value="0x5500ff">@Strings.c_5500ff</listEntry>
-				<listEntry value="0x555500">@Strings.c_555500</listEntry>
-				<listEntry value="0x5555aa">@Strings.c_5555aa</listEntry>
-				<listEntry value="0x5555ff">@Strings.c_5555ff</listEntry>
-				<listEntry value="0x55aa00">@Strings.c_55aa00</listEntry>
-				<listEntry value="0x55aa55">@Strings.c_55aa55</listEntry>
-				<listEntry value="0x55aaaa">@Strings.c_55aaaa</listEntry>
-				<listEntry value="0x55aaff">@Strings.c_55aaff</listEntry>
-				<listEntry value="0x55ff00">@Strings.c_55ff00</listEntry>
-				<listEntry value="0x55ff55">@Strings.c_55ff55</listEntry>
-				<listEntry value="0x55ffaa">@Strings.c_55ffaa</listEntry>
-				<listEntry value="0x55ffff">@Strings.c_55ffff</listEntry>
-				<listEntry value="0xaa0055">@Strings.c_aa0055</listEntry>
-				<listEntry value="0xaa00aa">@Strings.c_aa00aa</listEntry>
-				<listEntry value="0xaa5500">@Strings.c_aa5500</listEntry>
-				<listEntry value="0xaa5555">@Strings.c_aa5555</listEntry>
-				<listEntry value="0xaa55aa">@Strings.c_aa55aa</listEntry>
-				<listEntry value="0xaa55ff">@Strings.c_aa55ff</listEntry>
-				<listEntry value="0xaaaa00">@Strings.c_aaaa00</listEntry>
-				<listEntry value="0xaaaa55">@Strings.c_aaaa55</listEntry>
-				<listEntry value="0xaaaaff">@Strings.c_aaaaff</listEntry>
-				<listEntry value="0xaaff00">@Strings.c_aaff00</listEntry>
-				<listEntry value="0xaaff55">@Strings.c_aaff55</listEntry>
-				<listEntry value="0xaaffaa">@Strings.c_aaffaa</listEntry>
-				<listEntry value="0xaaffff">@Strings.c_aaffff</listEntry>
-				<listEntry value="0xff0055">@Strings.c_ff0055</listEntry>
-				<listEntry value="0xff00aa">@Strings.c_ff00aa</listEntry>
-				<listEntry value="0xff5555">@Strings.c_ff5555</listEntry>
-				<listEntry value="0xff55aa">@Strings.c_ff55aa</listEntry>
-				<listEntry value="0xff55ff">@Strings.c_ff55ff</listEntry>
-				<listEntry value="0xffaa55">@Strings.c_ffaa55</listEntry>
-				<listEntry value="0xffaaaa">@Strings.c_ffaaaa</listEntry>
-				<listEntry value="0xffaaff">@Strings.c_ffaaff</listEntry>
-				<listEntry value="0xffff00">@Strings.c_ffff00</listEntry>
-				<listEntry value="0xffff55">@Strings.c_ffff55</listEntry>
-				<listEntry value="0xffffaa">@Strings.c_ffffaa</listEntry>
-            </settingConfig>
         </setting>
 
         <setting propertyKey="@Properties.oneColor" title="@Strings.oneColor">
@@ -1578,6 +1494,152 @@
 
         <setting propertyKey="@Properties.showZero" title="@Strings.showZero">
             <settingConfig type="boolean"/>
+        </setting>
+
+        <setting propertyKey="@Properties.showBb" title="@Strings.showBb">
+            <settingConfig type="boolean"/>
+        </setting>
+
+        <setting propertyKey="@Properties.showStress" title="@Strings.showStress">
+            <settingConfig type="boolean"/>
+        </setting>
+
+        <setting propertyKey="@Properties.bbStressArcColor" title="@Strings.bbStressArcColor">
+            <settingConfig type="list">
+                <listEntry value="0xFFFFFF">@Strings.white</listEntry>
+                <listEntry value="0xAAAAAA">@Strings.ltGray</listEntry>
+                <listEntry value="0x555555">@Strings.dkGray</listEntry>
+                <listEntry value="0x000000">@Strings.black</listEntry>
+                <listEntry value="0xFF0000">@Strings.red</listEntry>
+                <listEntry value="0xAA0000">@Strings.dkRed</listEntry>
+                <listEntry value="0xFF5500">@Strings.orange</listEntry>
+                <listEntry value="0xFFAA00">@Strings.yellow</listEntry>
+                <listEntry value="0x00FF00">@Strings.green</listEntry>
+                <listEntry value="0x00AA00">@Strings.dkGreen</listEntry>
+                <listEntry value="0x00AAFF">@Strings.blue</listEntry>
+                <listEntry value="0x0000FF">@Strings.dkBlue</listEntry>
+                <listEntry value="0xAA00FF">@Strings.purple</listEntry>
+                <listEntry value="0xFF00FF">@Strings.pink</listEntry>
+				<listEntry value="0x000055">@Strings.c_000055</listEntry>
+				<listEntry value="0x0000aa">@Strings.c_0000aa</listEntry>
+				<listEntry value="0x005500">@Strings.c_005500</listEntry>
+				<listEntry value="0x005555">@Strings.c_005555</listEntry>
+				<listEntry value="0x0055aa">@Strings.c_0055aa</listEntry>
+				<listEntry value="0x0055ff">@Strings.c_0055ff</listEntry>
+				<listEntry value="0x00aa55">@Strings.c_00aa55</listEntry>
+				<listEntry value="0x00aaaa">@Strings.c_00aaaa</listEntry>
+				<listEntry value="0x00ff55">@Strings.c_00ff55</listEntry>
+				<listEntry value="0x00ffaa">@Strings.c_00ffaa</listEntry>
+				<listEntry value="0x00ffff">@Strings.c_00ffff</listEntry>
+				<listEntry value="0x550000">@Strings.c_550000</listEntry>
+				<listEntry value="0x550055">@Strings.c_550055</listEntry>
+				<listEntry value="0x5500aa">@Strings.c_5500aa</listEntry>
+				<listEntry value="0x5500ff">@Strings.c_5500ff</listEntry>
+				<listEntry value="0x555500">@Strings.c_555500</listEntry>
+				<listEntry value="0x5555aa">@Strings.c_5555aa</listEntry>
+				<listEntry value="0x5555ff">@Strings.c_5555ff</listEntry>
+				<listEntry value="0x55aa00">@Strings.c_55aa00</listEntry>
+				<listEntry value="0x55aa55">@Strings.c_55aa55</listEntry>
+				<listEntry value="0x55aaaa">@Strings.c_55aaaa</listEntry>
+				<listEntry value="0x55aaff">@Strings.c_55aaff</listEntry>
+				<listEntry value="0x55ff00">@Strings.c_55ff00</listEntry>
+				<listEntry value="0x55ff55">@Strings.c_55ff55</listEntry>
+				<listEntry value="0x55ffaa">@Strings.c_55ffaa</listEntry>
+				<listEntry value="0x55ffff">@Strings.c_55ffff</listEntry>
+				<listEntry value="0xaa0055">@Strings.c_aa0055</listEntry>
+				<listEntry value="0xaa00aa">@Strings.c_aa00aa</listEntry>
+				<listEntry value="0xaa5500">@Strings.c_aa5500</listEntry>
+				<listEntry value="0xaa5555">@Strings.c_aa5555</listEntry>
+				<listEntry value="0xaa55aa">@Strings.c_aa55aa</listEntry>
+				<listEntry value="0xaa55ff">@Strings.c_aa55ff</listEntry>
+				<listEntry value="0xaaaa00">@Strings.c_aaaa00</listEntry>
+				<listEntry value="0xaaaa55">@Strings.c_aaaa55</listEntry>
+				<listEntry value="0xaaaaff">@Strings.c_aaaaff</listEntry>
+				<listEntry value="0xaaff00">@Strings.c_aaff00</listEntry>
+				<listEntry value="0xaaff55">@Strings.c_aaff55</listEntry>
+				<listEntry value="0xaaffaa">@Strings.c_aaffaa</listEntry>
+				<listEntry value="0xaaffff">@Strings.c_aaffff</listEntry>
+				<listEntry value="0xff0055">@Strings.c_ff0055</listEntry>
+				<listEntry value="0xff00aa">@Strings.c_ff00aa</listEntry>
+				<listEntry value="0xff5555">@Strings.c_ff5555</listEntry>
+				<listEntry value="0xff55aa">@Strings.c_ff55aa</listEntry>
+				<listEntry value="0xff55ff">@Strings.c_ff55ff</listEntry>
+				<listEntry value="0xffaa55">@Strings.c_ffaa55</listEntry>
+				<listEntry value="0xffaaaa">@Strings.c_ffaaaa</listEntry>
+				<listEntry value="0xffaaff">@Strings.c_ffaaff</listEntry>
+				<listEntry value="0xffff00">@Strings.c_ffff00</listEntry>
+				<listEntry value="0xffff55">@Strings.c_ffff55</listEntry>
+				<listEntry value="0xffffaa">@Strings.c_ffffaa</listEntry>
+            </settingConfig>
+        </setting>
+
+        <setting propertyKey="@Properties.bbStressWarningArcColor" title="@Strings.bbStressWarningArcColor">
+            <settingConfig type="list">
+                <listEntry value="0xFFFFFF">@Strings.white</listEntry>
+                <listEntry value="0xAAAAAA">@Strings.ltGray</listEntry>
+                <listEntry value="0x555555">@Strings.dkGray</listEntry>
+                <listEntry value="0x000000">@Strings.black</listEntry>
+                <listEntry value="0xFF0000">@Strings.red</listEntry>
+                <listEntry value="0xAA0000">@Strings.dkRed</listEntry>
+                <listEntry value="0xFF5500">@Strings.orange</listEntry>
+                <listEntry value="0xFFAA00">@Strings.yellow</listEntry>
+                <listEntry value="0x00FF00">@Strings.green</listEntry>
+                <listEntry value="0x00AA00">@Strings.dkGreen</listEntry>
+                <listEntry value="0x00AAFF">@Strings.blue</listEntry>
+                <listEntry value="0x0000FF">@Strings.dkBlue</listEntry>
+                <listEntry value="0xAA00FF">@Strings.purple</listEntry>
+                <listEntry value="0xFF00FF">@Strings.pink</listEntry>
+				<listEntry value="0x000055">@Strings.c_000055</listEntry>
+				<listEntry value="0x0000aa">@Strings.c_0000aa</listEntry>
+				<listEntry value="0x005500">@Strings.c_005500</listEntry>
+				<listEntry value="0x005555">@Strings.c_005555</listEntry>
+				<listEntry value="0x0055aa">@Strings.c_0055aa</listEntry>
+				<listEntry value="0x0055ff">@Strings.c_0055ff</listEntry>
+				<listEntry value="0x00aa55">@Strings.c_00aa55</listEntry>
+				<listEntry value="0x00aaaa">@Strings.c_00aaaa</listEntry>
+				<listEntry value="0x00ff55">@Strings.c_00ff55</listEntry>
+				<listEntry value="0x00ffaa">@Strings.c_00ffaa</listEntry>
+				<listEntry value="0x00ffff">@Strings.c_00ffff</listEntry>
+				<listEntry value="0x550000">@Strings.c_550000</listEntry>
+				<listEntry value="0x550055">@Strings.c_550055</listEntry>
+				<listEntry value="0x5500aa">@Strings.c_5500aa</listEntry>
+				<listEntry value="0x5500ff">@Strings.c_5500ff</listEntry>
+				<listEntry value="0x555500">@Strings.c_555500</listEntry>
+				<listEntry value="0x5555aa">@Strings.c_5555aa</listEntry>
+				<listEntry value="0x5555ff">@Strings.c_5555ff</listEntry>
+				<listEntry value="0x55aa00">@Strings.c_55aa00</listEntry>
+				<listEntry value="0x55aa55">@Strings.c_55aa55</listEntry>
+				<listEntry value="0x55aaaa">@Strings.c_55aaaa</listEntry>
+				<listEntry value="0x55aaff">@Strings.c_55aaff</listEntry>
+				<listEntry value="0x55ff00">@Strings.c_55ff00</listEntry>
+				<listEntry value="0x55ff55">@Strings.c_55ff55</listEntry>
+				<listEntry value="0x55ffaa">@Strings.c_55ffaa</listEntry>
+				<listEntry value="0x55ffff">@Strings.c_55ffff</listEntry>
+				<listEntry value="0xaa0055">@Strings.c_aa0055</listEntry>
+				<listEntry value="0xaa00aa">@Strings.c_aa00aa</listEntry>
+				<listEntry value="0xaa5500">@Strings.c_aa5500</listEntry>
+				<listEntry value="0xaa5555">@Strings.c_aa5555</listEntry>
+				<listEntry value="0xaa55aa">@Strings.c_aa55aa</listEntry>
+				<listEntry value="0xaa55ff">@Strings.c_aa55ff</listEntry>
+				<listEntry value="0xaaaa00">@Strings.c_aaaa00</listEntry>
+				<listEntry value="0xaaaa55">@Strings.c_aaaa55</listEntry>
+				<listEntry value="0xaaaaff">@Strings.c_aaaaff</listEntry>
+				<listEntry value="0xaaff00">@Strings.c_aaff00</listEntry>
+				<listEntry value="0xaaff55">@Strings.c_aaff55</listEntry>
+				<listEntry value="0xaaffaa">@Strings.c_aaffaa</listEntry>
+				<listEntry value="0xaaffff">@Strings.c_aaffff</listEntry>
+				<listEntry value="0xff0055">@Strings.c_ff0055</listEntry>
+				<listEntry value="0xff00aa">@Strings.c_ff00aa</listEntry>
+				<listEntry value="0xff5555">@Strings.c_ff5555</listEntry>
+				<listEntry value="0xff55aa">@Strings.c_ff55aa</listEntry>
+				<listEntry value="0xff55ff">@Strings.c_ff55ff</listEntry>
+				<listEntry value="0xffaa55">@Strings.c_ffaa55</listEntry>
+				<listEntry value="0xffaaaa">@Strings.c_ffaaaa</listEntry>
+				<listEntry value="0xffaaff">@Strings.c_ffaaff</listEntry>
+				<listEntry value="0xffff00">@Strings.c_ffff00</listEntry>
+				<listEntry value="0xffff55">@Strings.c_ffff55</listEntry>
+				<listEntry value="0xffffaa">@Strings.c_ffffaa</listEntry>
+            </settingConfig>
         </setting>
 
         <setting propertyKey="@Properties.hrColor" title="@Strings.hrColor">

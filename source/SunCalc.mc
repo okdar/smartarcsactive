@@ -4,26 +4,26 @@ using Toybox.Math as Math;
 using Toybox.Time as Time;
 using Toybox.Position as Pos;
 
-enum {
-	NIGHT_END,
-	NAUTICAL_DAWN,
-	DAWN,
-	BLUE_HOUR_AM,
-	SUNRISE,
-	SUNRISE_END,
-	GOLDEN_HOUR_AM,
-	NOON,
-	GOLDEN_HOUR_PM,
-	SUNSET_START,
-	SUNSET,
-	BLUE_HOUR_PM,
-	DUSK,
-	NAUTICAL_DUSK,
-	NIGHT,
-	NUM_RESULTS
-}
-
 class SunCalc {
+
+    enum {
+        NIGHT_END,
+        NAUTICAL_DAWN,
+        DAWN,
+        BLUE_HOUR_AM,
+        SUNRISE,
+        SUNRISE_END,
+        GOLDEN_HOUR_AM,
+        NOON,
+        GOLDEN_HOUR_PM,
+        SUNSET_START,
+        SUNSET,
+        BLUE_HOUR_PM,
+        DUSK,
+        NAUTICAL_DUSK,
+        NIGHT,
+        NUM_RESULTS
+    }
 
     hidden const PI   = Math.PI,
         RAD  = Math.PI / 180.0,
