@@ -1,3 +1,10 @@
+# 2.0.0 (January 1, 2024)
+* added body battery indicator
+* added stress level indicator
+* improved screen resolution scaling
+* new watch models supported - Approach® S70, D2™ Air X10, D2™ Mach 1, Descent™ MK3, epix™, epix™ Pro, fēnix® 7, fēnix® 7 Pro, fēnix® 7S, fēnix® 7S Pro, fēnix® 7X, fēnix® 7X Pro, Forerunner® 255, Forerunner® 255S, Forerunner® 265, Forerunner® 265S, Forerunner® 955, Forerunner® 965, MARQ® (Gen 2), MARQ™ Aviator (Gen 2), Venu® 2, Venu® 2 Plus, Venu® 2S, Venu® 3, Venu® 3S, quatix® 6, quatix® 6X, tactix® 7, vívoactive® 5
+
+Full changelog: https://github.com/okdar/smartarcsactive/blob/master/CHANGELOG.md
 # 1.5.2 (June 24, 2023)
 * twilights indicator redesign
 
