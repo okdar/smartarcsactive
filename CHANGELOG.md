@@ -1,3 +1,6 @@
+# 2.0.1 (January 23, 2024)
+* bugfix - loading settings
+
 # 2.0.0 (January 1, 2024)
 * added body battery indicator
 * added stress level indicator
