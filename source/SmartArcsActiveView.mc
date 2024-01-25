@@ -111,6 +111,13 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
     var sunriseColor;
     var sunsetColor;
 
+    enum {
+        STEPS = 1,
+        STAIRS = 2,
+        BODY_BATTERY = 3,
+        STRESS = 4
+    }
+
     function initialize() {
         WatchFace.initialize();
     }
@@ -682,7 +689,7 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
             distance = (distance/100000.0).format("%.2f");
         }
 
-        drawActivity(dc, 1, steps, distance, stepsGoal, recalculateCoordinate(70), activity1Y, activity2Y, activityArcY);
+        drawActivity(dc, STEPS, steps, distance, stepsGoal, recalculateCoordinate(70), activity1Y, activity2Y, activityArcY);
     }
 
     function drawFloors(dc, floorsClimbed, floorsDescended, floorsGoal) {
@@ -696,15 +703,15 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
             floorsGoal = 0;
         }
 
-        drawActivity(dc, 2, floorsClimbed, floorsDescended.toString(), floorsGoal, recalculateCoordinate(-30), activity1Y, activity2Y, activityArcY);
+        drawActivity(dc, STAIRS, floorsClimbed, floorsDescended.toString(), floorsGoal, recalculateCoordinate(-30), activity1Y, activity2Y, activityArcY);
     }
 
     function drawBodyBattery(dc) {
-        drawActivity(dc, 3, getLastHistoryValue(Toybox.SensorHistory.getBodyBatteryHistory({:period=>1})), -1, 100, recalculateCoordinate(40), screenRadius - (activity1Y - screenRadius + (halfFontHeight * 2)) - recalculateCoordinate(10 - 1), -1, screenRadius - (activityArcY - screenRadius) - recalculateCoordinate(7));
+        drawActivity(dc, BODY_BATTERY, getLastHistoryValue(Toybox.SensorHistory.getBodyBatteryHistory({:period=>1})), -1, 100, recalculateCoordinate(40), screenRadius - (activity1Y - screenRadius + (halfFontHeight * 2)) - recalculateCoordinate(10 - 1), -1, screenRadius - (activityArcY - screenRadius) - recalculateCoordinate(7));
     }
 
     function drawStress(dc) {
-        drawActivity(dc, 4, getLastHistoryValue(Toybox.SensorHistory.getStressHistory({:period=>1})), -1, 100, recalculateCoordinate(-40), screenRadius - (activity1Y - screenRadius + (halfFontHeight * 2)) - recalculateCoordinate(10 - 1), -1, screenRadius - (activityArcY - screenRadius) - recalculateCoordinate(7));
+        drawActivity(dc, STRESS, getLastHistoryValue(Toybox.SensorHistory.getStressHistory({:period=>1})), -1, 100, recalculateCoordinate(-40), screenRadius - (activity1Y - screenRadius + (halfFontHeight * 2)) - recalculateCoordinate(10 - 1), -1, screenRadius - (activityArcY - screenRadius) - recalculateCoordinate(7));
     }
 
     //activityType - 1 steps, 2 stairs, 3 body battery, 4 stress
@@ -719,6 +726,12 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
         var progressXShift = xShift - recalculateCoordinate(5);
 
         dc.setColor(activityColor, Graphics.COLOR_TRANSPARENT);
+        if (activity1 > 0 || activity2.toFloat() > 0 || showZero) {
+            dc.setPenWidth(1);
+            dc.drawArc(screenRadius - progressXShift, activityArcY, halfFontHeight - 1, Graphics.ARC_COUNTER_CLOCKWISE, startActivityAngle, endActivityAngle);
+            dc.drawArc(screenRadius - progressXShift, activityArcY, halfFontHeight + 3, Graphics.ARC_COUNTER_CLOCKWISE, startActivityAngle, endActivityAngle);
+        }
+
         if (activity1 > 0 || showZero) {
             if (activity1 == 999999) {
                 dc.drawText(screenRadius - xShift, activity1Y, font, "--", Graphics.TEXT_JUSTIFY_LEFT);
@@ -726,10 +739,6 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
             } else {
                 dc.drawText(screenRadius - xShift, activity1Y, font, activity1, Graphics.TEXT_JUSTIFY_LEFT);
             }
-
-            dc.setPenWidth(1);
-            dc.drawArc(screenRadius - progressXShift, activityArcY, halfFontHeight - 1, Graphics.ARC_COUNTER_CLOCKWISE, startActivityAngle, endActivityAngle);
-            dc.drawArc(screenRadius - progressXShift, activityArcY, halfFontHeight + 3, Graphics.ARC_COUNTER_CLOCKWISE, startActivityAngle, endActivityAngle);
 
             dc.setPenWidth(recalculateCoordinate(5));
 
@@ -742,15 +751,15 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
                 } else if (endAngle.toNumber() == startActivityAngle) {
                     endAngle = startActivityAngle + 1;
                 }
-                if ((activityType == 3 && activity1 > 25) || (activityType == 4 && activity1 < 75)) {
+                if ((activityType == BODY_BATTERY && activity1 > 25) || (activityType == STRESS && activity1 < 75)) {
                     dc.setColor(bbStressArcColor, Graphics.COLOR_TRANSPARENT);
-                } else if (activityType >= 3) {
+                } else if (activityType >= BODY_BATTERY) {
                     dc.setColor(bbStressWarningArcColor, Graphics.COLOR_TRANSPARENT);
                 }
                 dc.drawArc(screenRadius - progressXShift, activityArcY, halfFontHeight + 1, Graphics.ARC_COUNTER_CLOCKWISE, startActivityAngle, endAngle);
             }
         }
-        if (activityType <= 2 && (activity2.toFloat() > 0 || showZero)) {
+        if (activityType <= STAIRS && (activity2.toFloat() > 0 || showZero)) {
             dc.setColor(activityColor, Graphics.COLOR_TRANSPARENT);
             dc.drawText(screenRadius - xShift + recalculateCoordinate(20), activity2Y, font, activity2, Graphics.TEXT_JUSTIFY_LEFT);
         }

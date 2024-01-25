@@ -1,3 +1,6 @@
+# 2.0.2 (January 25, 2024)
+* bugfix - indicator for zero value
+
 # 2.0.1 (January 23, 2024)
 * bugfix - loading settings
 
