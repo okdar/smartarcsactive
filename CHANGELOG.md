@@ -1,3 +1,7 @@
+# 3.0.0 (April 26, 2025)
+* implemented Lost and Found feature
+* power saver fix
+
 # 2.0.2 (January 25, 2024)
 * bugfix - indicator for zero value
 

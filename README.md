@@ -16,5 +16,3 @@ Activity indicators on the screen display:
 * floors on the right side. First line displays climbed floors, second line descended floors. Arc shows how you fulfill daily climbed floors goal.
 * body battery
 * stress level
-
-Power saver

@@ -46,6 +46,7 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
     var lastMeasuredHR;
     var powerSaverDrawn = false;
     var sunArcsOffset;
+    var lastPhoneConnectedTime;
 
     //global variables for pre-computation
     var screenRadius;
@@ -64,7 +65,6 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
     var halfHRTextWidth;
     var startPowerSaverMin;
     var endPowerSaverMin;
-    var powerSaverIconRatio;
 	var sunriseStartAngle = 0;
 	var sunriseEndAngle = 0;
 	var sunsetStartAngle = 0;
@@ -107,9 +107,11 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
     var hrRefreshInterval;
     var powerSaver;
     var powerSaverRefreshInterval;
-    var powerSaverIconColor;
     var sunriseColor;
     var sunsetColor;
+    var showLostAndFound;
+    var phone;
+    var email;
 
     enum {
         STEPS = 1,
@@ -171,17 +173,72 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
     function onUpdate(dc) {
         var clockTime = System.getClockTime();
 
-		//refresh whole screen before drawing power saver icon
-        if (powerSaverDrawn && shouldPowerSave()) {
-            //should be screen refreshed in given intervals?
-            if (powerSaverRefreshInterval == offSettingFlag || !(clockTime.min % powerSaverRefreshInterval == 0)) {
-                return;
+        var deviceSettings = System.getDeviceSettings();
+        if (deviceSettings.phoneConnected) {
+            lastPhoneConnectedTime = Time.now();
+            if (clockTime.min % 10 == 0) {
+                Application.getApp().setProperty("lastPhoneConnectedTime", lastPhoneConnectedTime.value());
             }
+        } else if (showLostAndFound != offSettingFlag &&
+                    (lastPhoneConnectedTime == null || Time.now().subtract(lastPhoneConnectedTime).value() > showLostAndFound)) {
+                //update power saver display
+                var targetDc;
+                if (offscreenBuffer != null) {
+                    //if we have an offscreen buffer that we are using to draw the background,
+                    //set the draw context of that buffer as our target.
+                    targetDc = offscreenBuffer.getDc();
+                    dc.clearClip();
+                } else {
+                    targetDc = dc;
+                }
+
+                drawLostAndFound(targetDc);
+
+                //update screen
+                drawBackground(dc);
+
+                return;
+        }
+        
+        //check power saver state
+        if (shouldPowerSave()) {
+            //if already in power saver mode, check if we need to refresh
+            if (powerSaverDrawn) {
+                //only refresh at specified intervals or if first time
+                if (powerSaverRefreshInterval == offSettingFlag || !(clockTime.min % powerSaverRefreshInterval == 0)) {
+                    //preserve current screen state
+                    drawBackground(dc);
+                    return;
+                }
+            }
+
+            //update power saver display
+            var targetDc;
+            if (offscreenBuffer != null) {
+                //if we have an offscreen buffer that we are using to draw the background,
+                //set the draw context of that buffer as our target.
+                targetDc = offscreenBuffer.getDc();
+                dc.clearClip();
+            } else {
+                targetDc = dc;
+            }
+
+            //clear screen and draw minimal display
+            targetDc.setColor(bgColor, Graphics.COLOR_TRANSPARENT);
+            targetDc.fillCircle(screenRadius, screenRadius, screenRadius + 2);
+            drawHands(targetDc, clockTime);
+
+            //update screen
+           drawBackground(dc);
+
+            //update state
+            powerSaverDrawn = true;
+            return;
         }
 
+        //regular update path
         powerSaverDrawn = false;
 
-        var deviceSettings = System.getDeviceSettings();
         var activityInfo = ActivityMonitor.getInfo();
 
 		if (clockTime.min == 0) {
@@ -288,11 +345,6 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
         //output the offscreen buffers to the main display if required.
         drawBackground(dc);
 
-        if (shouldPowerSave()) {
-            drawPowerSaverIcon(dc);
-            return;
-        }
-
         if (partialUpdatesAllowed && (hrColor != offSettingFlag)) {
             onPartialUpdate(dc);
         }
@@ -307,6 +359,7 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
 
     //the user has just looked at their watch. Timers and animations may be started here.
     function onExitSleep() {
+        requestUpdate();
         isAwake = true;
     }
 
@@ -378,21 +431,12 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
 
         var power = app.getProperty("powerSaver");
 		powerSaverRefreshInterval = app.getProperty("powerSaverRefreshInterval");
-		powerSaverIconColor = app.getProperty("powerSaverIconColor");
         if (power == 1) {
         	powerSaver = false;
     	} else {
     		powerSaver = true;
-            var powerSaverBeginning;
-            var powerSaverEnd;
-            if (power == 2) {
-                powerSaverBeginning = app.getProperty("powerSaverBeginning");
-                powerSaverEnd = app.getProperty("powerSaverEnd");
-            } else {
-                powerSaverBeginning = "00:00";
-                powerSaverEnd = "23:59";
-                powerSaverRefreshInterval = -999;
-            }
+            var powerSaverBeginning = app.getProperty("powerSaverBeginning");
+            var powerSaverEnd = app.getProperty("powerSaverEnd");
             startPowerSaverMin = parsePowerSaverTime(powerSaverBeginning);
             if (startPowerSaverMin == -1) {
                 powerSaver = false;
@@ -406,6 +450,18 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
 		
 		locationLatitude = app.getProperty("locationLatitude");
 		locationLongitude = app.getProperty("locationLongitude");
+
+        showLostAndFound = app.getProperty("showLostAndFound");
+        if (showLostAndFound != offSettingFlag) {
+            showLostAndFound *= 3600;
+        }
+        phone = app.getProperty("phone");
+        email = app.getProperty("email");
+        if (app.getProperty("lastPhoneConnectedTime") == -999) {
+            lastPhoneConnectedTime = null;
+        } else {
+            lastPhoneConnectedTime = new Time.Moment(app.getProperty("lastPhoneConnectedTime"));
+        }
 
         //ensure that screen will be refreshed when settings are changed 
     	powerSaverDrawn = false;
@@ -422,12 +478,6 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
         minuteHandLength = recalculateCoordinate(90);
         handsTailLength = recalculateCoordinate(15);
         
-        if (powerSaverRefreshInterval == offSettingFlag) {
-            powerSaverIconRatio = 1.0; //big icon
-        } else {
-            powerSaverIconRatio = 0.6; //small icon
-        }
-
         if (!((ticksColor == offSettingFlag) ||
             (ticksColor != offSettingFlag && ticks1MinWidth == 0 && ticks5MinWidth == 0 && ticks15MinWidth == 0))) {
             //array of ticks coordinates
@@ -583,10 +633,11 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
 
     //Handle the partial update event
     function onPartialUpdate(dc) {
-		//refresh whole screen before drawing power saver icon
-        if (powerSaverDrawn && shouldPowerSave()) {
-    		return;
-    	}
+        if ((showLostAndFound != offSettingFlag && 
+                (lastPhoneConnectedTime == null || Time.now().subtract(lastPhoneConnectedTime).value() > showLostAndFound)) ||
+                (powerSaverDrawn && shouldPowerSave())) {
+            return;
+        }
 
         powerSaverDrawn = false;
 
@@ -810,42 +861,47 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
     }
 
     function shouldPowerSave() {
-        if (powerSaver && !isAwake) {
-            var refreshDisplay = true;
-            var time = System.getClockTime();
-            var timeMinOfDay = (time.hour * 60) + time.min;
-
-            if (startPowerSaverMin <= endPowerSaverMin) {
-                if ((startPowerSaverMin <= timeMinOfDay) && (timeMinOfDay < endPowerSaverMin)) {
-                    refreshDisplay = false;
-                }
-            } else {
-                if ((startPowerSaverMin <= timeMinOfDay) || (timeMinOfDay < endPowerSaverMin)) {
-                    refreshDisplay = false;
-                }
-        	}
-             return !refreshDisplay;
-        } else {
+        if (!powerSaver || isAwake) {
             return false;
         }
+
+        var time = System.getClockTime();
+        var timeMinOfDay = (time.hour * 60) + time.min;        
+        //check if we're in power saver time window
+        var inPowerSaverWindow = false;
+        if (startPowerSaverMin <= endPowerSaverMin) {
+            inPowerSaverWindow = (startPowerSaverMin <= timeMinOfDay && timeMinOfDay < endPowerSaverMin);
+        } else {
+            inPowerSaverWindow = (startPowerSaverMin <= timeMinOfDay || timeMinOfDay < endPowerSaverMin);
+        }
+        return inPowerSaverWindow;
     }
 
-    function drawPowerSaverIcon(dc) {
-        dc.setColor(handsColor, Graphics.COLOR_TRANSPARENT);
-        dc.fillCircle(screenRadius, screenRadius, recalculateCoordinate(45) * powerSaverIconRatio);
-        dc.setColor(bgColor, Graphics.COLOR_TRANSPARENT);
-        dc.fillCircle(screenRadius, screenRadius, recalculateCoordinate(40) * powerSaverIconRatio);
-        dc.setColor(handsColor, Graphics.COLOR_TRANSPARENT);
-        dc.fillRectangle(screenRadius - (recalculateCoordinate(13) * powerSaverIconRatio), screenRadius - (recalculateCoordinate(23) * powerSaverIconRatio), recalculateCoordinate(26) * powerSaverIconRatio, recalculateCoordinate(51) * powerSaverIconRatio);
-        dc.fillRectangle(screenRadius - (recalculateCoordinate(4) * powerSaverIconRatio), screenRadius - (recalculateCoordinate(27) * powerSaverIconRatio), recalculateCoordinate(8) * powerSaverIconRatio, recalculateCoordinate(5) * powerSaverIconRatio);
-        if (oneColor == offSettingFlag) {
-            dc.setColor(powerSaverIconColor, Graphics.COLOR_TRANSPARENT);
-        } else {
-            dc.setColor(oneColor, Graphics.COLOR_TRANSPARENT);
-        }
-        dc.fillRectangle(screenRadius - (recalculateCoordinate(10) * powerSaverIconRatio), screenRadius - (recalculateCoordinate(20) * powerSaverIconRatio), recalculateCoordinate(20) * powerSaverIconRatio, recalculateCoordinate(45) * powerSaverIconRatio);
+    function drawLostAndFound(dc) {
+        //clean the screen
+        dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
+        dc.fillCircle(screenRadius, screenRadius, screenRadius + 2);
 
-        powerSaverDrawn = true;
+        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
+        drawMessage(dc, "If found, contact:", screenRadius, recalculateCoordinate(45), recalculateCoordinate(230));
+        drawMessage(dc, phone, screenRadius, recalculateCoordinate(105), recalculateCoordinate(260));
+        drawMessage(dc, email, screenRadius, recalculateCoordinate(138), recalculateCoordinate(260));
+        drawMessage(dc, "Thank you!", screenRadius, recalculateCoordinate(195), recalculateCoordinate(220));
+    }
+
+    function drawMessage(dc, msg, screenRadius, posY, width) {
+        var font = Graphics.FONT_SMALL;
+        var textDimension = dc.getTextDimensions(msg, font);
+
+        if (textDimension[0] > width) {
+            font = Graphics.FONT_TINY;
+            textDimension = dc.getTextDimensions(msg, font);
+            if (textDimension[0] > width) {
+                font = Graphics.FONT_XTINY;
+            }
+        }
+
+        dc.drawText(screenRadius, posY, font, msg, Graphics.TEXT_JUSTIFY_CENTER);
     }
 
 	function computeSunConstants() {

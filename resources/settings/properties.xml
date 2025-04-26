@@ -19,6 +19,8 @@
 <resources>
 
     <properties>
+        <property id="userGuide" type="string">https://okdar.github.io/smartarcs/</property>
+
         <property id="bgColor" type="number">0x000000</property>
         <property id="ticksColor" type="number">0xFFFFFF</property>
         <property id="ticks1MinWidth" type="number">0</property>
@@ -67,10 +69,16 @@
         <property id="powerSaverBeginning" type="string">22:00</property>
         <property id="powerSaverEnd" type="string">6:00</property>
         <property id="powerSaverRefreshInterval" type="number">5</property>
-        <property id="powerSaverIconColor" type="number">0x00FF00</property>
+
+        <property id="showLostAndFound" type="number">-999</property>
+        <property id="phone" type="string"></property>
+        <property id="email" type="string"></property>
+        <property id="lastPhoneConnectedTime" type="number">-999</property>
     </properties>
 
     <strings>
+        <string id="userGuide">SmartArcs Active user guide:</string>
+
         <string id="bgColor">Background color</string>
         <string id="ticksColor">Ticks color (off or color)</string>
         <string id="ticks1MinWidth">1-minute ticks width</string>
@@ -199,7 +207,6 @@
         <string id="powerSaver">Power saver</string>
         <string id="powerSaverNever">Never</string>
         <string id="powerSaverWindow">In defined time window</string>
-        <string id="powerSaverAlways">Always</string>
         <string id="powerSaverBeginning">Power saver begins at (hh:mm, 24h format)</string>
         <string id="powerSaverEnd">Power saver ends at (hh:mm, 24h format)</string>
         <string id="powerSaverRefreshInterval">Screen refresh interval in power saver mode (minutes)</string>
@@ -207,10 +214,24 @@
         <string id="powerSaver5">5</string>
         <string id="powerSaver10">10</string>
         <string id="powerSaver15">15</string>
-        <string id="powerSaverIconColor">Power saver icon color</string>
+
+        <string id="showLostAndFound">Show 'Lost and Found' message after (hours)</string>
+		<string id="lostAndFoundNever">Never</string>
+		<string id="lostAndFound1">1</string>
+        <string id="lostAndFound2">2</string>
+        <string id="lostAndFound3">3</string>
+        <string id="lostAndFound6">6</string>
+        <string id="lostAndFound12">12</string>
+        <string id="lostAndFound24">24</string>
+        <string id="phone">Phone number</string>
+        <string id="email">Email</string>
     </strings>
 
     <settings>
+		<setting propertyKey="@Properties.userGuide" title="@Strings.userGuide">
+			<settingConfig type="alphaNumeric" readonly="true" />
+		</setting>
+
         <setting propertyKey="@Properties.bgColor" title="@Strings.bgColor">
             <settingConfig type="list">
                 <listEntry value="0xFFFFFF">@Strings.white</listEntry>
@@ -1725,7 +1746,6 @@
 	        <settingConfig type="list">
 	            <listEntry value="1">@Strings.powerSaverNever</listEntry>
 	            <listEntry value="2">@Strings.powerSaverWindow</listEntry>
-	            <listEntry value="3">@Strings.powerSaverAlways</listEntry>
 	        </settingConfig>
 	    </setting>
 	    <setting propertyKey="@Properties.powerSaverBeginning" title="@Strings.powerSaverBeginning">
@@ -1742,73 +1762,25 @@
 	            <listEntry value="15">@Strings.powerSaver15</listEntry>
 	        </settingConfig>
 	    </setting>
-	    <setting propertyKey="@Properties.powerSaverIconColor" title="@Strings.powerSaverIconColor">
-            <settingConfig type="list">
-                <listEntry value="0xFFFFFF">@Strings.white</listEntry>
-                <listEntry value="0xAAAAAA">@Strings.ltGray</listEntry>
-                <listEntry value="0x555555">@Strings.dkGray</listEntry>
-                <listEntry value="0x000000">@Strings.black</listEntry>
-                <listEntry value="0xFF0000">@Strings.red</listEntry>
-                <listEntry value="0xAA0000">@Strings.dkRed</listEntry>
-                <listEntry value="0xFF5500">@Strings.orange</listEntry>
-                <listEntry value="0xFFAA00">@Strings.yellow</listEntry>
-                <listEntry value="0x00FF00">@Strings.green</listEntry>
-                <listEntry value="0x00AA00">@Strings.dkGreen</listEntry>
-                <listEntry value="0x00AAFF">@Strings.blue</listEntry>
-                <listEntry value="0x0000FF">@Strings.dkBlue</listEntry>
-                <listEntry value="0xAA00FF">@Strings.purple</listEntry>
-                <listEntry value="0xFF00FF">@Strings.pink</listEntry>
-				<listEntry value="0x000055">@Strings.c_000055</listEntry>
-				<listEntry value="0x0000aa">@Strings.c_0000aa</listEntry>
-				<listEntry value="0x005500">@Strings.c_005500</listEntry>
-				<listEntry value="0x005555">@Strings.c_005555</listEntry>
-				<listEntry value="0x0055aa">@Strings.c_0055aa</listEntry>
-				<listEntry value="0x0055ff">@Strings.c_0055ff</listEntry>
-				<listEntry value="0x00aa55">@Strings.c_00aa55</listEntry>
-				<listEntry value="0x00aaaa">@Strings.c_00aaaa</listEntry>
-				<listEntry value="0x00ff55">@Strings.c_00ff55</listEntry>
-				<listEntry value="0x00ffaa">@Strings.c_00ffaa</listEntry>
-				<listEntry value="0x00ffff">@Strings.c_00ffff</listEntry>
-				<listEntry value="0x550000">@Strings.c_550000</listEntry>
-				<listEntry value="0x550055">@Strings.c_550055</listEntry>
-				<listEntry value="0x5500aa">@Strings.c_5500aa</listEntry>
-				<listEntry value="0x5500ff">@Strings.c_5500ff</listEntry>
-				<listEntry value="0x555500">@Strings.c_555500</listEntry>
-				<listEntry value="0x5555aa">@Strings.c_5555aa</listEntry>
-				<listEntry value="0x5555ff">@Strings.c_5555ff</listEntry>
-				<listEntry value="0x55aa00">@Strings.c_55aa00</listEntry>
-				<listEntry value="0x55aa55">@Strings.c_55aa55</listEntry>
-				<listEntry value="0x55aaaa">@Strings.c_55aaaa</listEntry>
-				<listEntry value="0x55aaff">@Strings.c_55aaff</listEntry>
-				<listEntry value="0x55ff00">@Strings.c_55ff00</listEntry>
-				<listEntry value="0x55ff55">@Strings.c_55ff55</listEntry>
-				<listEntry value="0x55ffaa">@Strings.c_55ffaa</listEntry>
-				<listEntry value="0x55ffff">@Strings.c_55ffff</listEntry>
-				<listEntry value="0xaa0055">@Strings.c_aa0055</listEntry>
-				<listEntry value="0xaa00aa">@Strings.c_aa00aa</listEntry>
-				<listEntry value="0xaa5500">@Strings.c_aa5500</listEntry>
-				<listEntry value="0xaa5555">@Strings.c_aa5555</listEntry>
-				<listEntry value="0xaa55aa">@Strings.c_aa55aa</listEntry>
-				<listEntry value="0xaa55ff">@Strings.c_aa55ff</listEntry>
-				<listEntry value="0xaaaa00">@Strings.c_aaaa00</listEntry>
-				<listEntry value="0xaaaa55">@Strings.c_aaaa55</listEntry>
-				<listEntry value="0xaaaaff">@Strings.c_aaaaff</listEntry>
-				<listEntry value="0xaaff00">@Strings.c_aaff00</listEntry>
-				<listEntry value="0xaaff55">@Strings.c_aaff55</listEntry>
-				<listEntry value="0xaaffaa">@Strings.c_aaffaa</listEntry>
-				<listEntry value="0xaaffff">@Strings.c_aaffff</listEntry>
-				<listEntry value="0xff0055">@Strings.c_ff0055</listEntry>
-				<listEntry value="0xff00aa">@Strings.c_ff00aa</listEntry>
-				<listEntry value="0xff5555">@Strings.c_ff5555</listEntry>
-				<listEntry value="0xff55aa">@Strings.c_ff55aa</listEntry>
-				<listEntry value="0xff55ff">@Strings.c_ff55ff</listEntry>
-				<listEntry value="0xffaa55">@Strings.c_ffaa55</listEntry>
-				<listEntry value="0xffaaaa">@Strings.c_ffaaaa</listEntry>
-				<listEntry value="0xffaaff">@Strings.c_ffaaff</listEntry>
-				<listEntry value="0xffff00">@Strings.c_ffff00</listEntry>
-				<listEntry value="0xffff55">@Strings.c_ffff55</listEntry>
-				<listEntry value="0xffffaa">@Strings.c_ffffaa</listEntry>
-            </settingConfig>
+    </settings>
+
+	<settings>
+	    <setting propertyKey="@Properties.showLostAndFound" title="@Strings.showLostAndFound">
+	        <settingConfig type="list">
+	            <listEntry value="-999">@Strings.lostAndFoundNever</listEntry>
+	            <listEntry value="1">@Strings.lostAndFound1</listEntry>
+	            <listEntry value="2">@Strings.lostAndFound2</listEntry>
+	            <listEntry value="3">@Strings.lostAndFound3</listEntry>
+	            <listEntry value="6">@Strings.lostAndFound6</listEntry>
+	            <listEntry value="12">@Strings.lostAndFound12</listEntry>
+	            <listEntry value="24">@Strings.lostAndFound24</listEntry>
+	        </settingConfig>
+	    </setting>
+        <setting propertyKey="@Properties.phone" title="@Strings.phone">
+            <settingConfig type="alphaNumeric"/>
+        </setting>
+        <setting propertyKey="@Properties.email" title="@Strings.email">
+            <settingConfig type="alphaNumeric"/>
         </setting>
     </settings>
 
