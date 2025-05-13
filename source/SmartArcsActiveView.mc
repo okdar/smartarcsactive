@@ -71,7 +71,6 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
 	var sunsetEndAngle = 0;
 	var locationLatitude;
 	var locationLongitude;
-    var dateInfo;
 	
     //user settings
     var bgColor;
@@ -244,8 +243,6 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
 		if (clockTime.min == 0) {
     		//recompute sunrise/sunset constants every hour - to address new location when traveling
 			computeSunConstants();
-            //not needed to get date on every refresh event
-            dateInfo = Gregorian.info(Time.today(), Time.FORMAT_MEDIUM);
 		}
 
         //we always want to refresh the full screen when we get a regular onUpdate call.
@@ -491,8 +488,6 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
         activityArcY = activity1Y + 1 + halfFontHeight;
 
         halfHRTextWidth = hrTextDimension[0] / 2;
-        
-        dateInfo = Gregorian.info(Time.today(), Time.FORMAT_MEDIUM);
     }
 
     function parsePowerSaverTime(time) {
@@ -708,6 +703,7 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
 
     function drawDate(dc) {
         var dateString = "";
+        var dateInfo = Gregorian.info(Time.today(), Time.FORMAT_MEDIUM);
         switch (dateFormat) {
             case 0: dateString = dateInfo.day;
                     break;

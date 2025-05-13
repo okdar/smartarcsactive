@@ -1,3 +1,6 @@
+# 3.0.1 (May 13, 2025)
+* minor bugfix (drawDate)
+
 # 3.0.0 (April 26, 2025)
 * implemented Lost and Found feature
 * power saver fix
