@@ -65,6 +65,20 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
     var halfHRTextWidth;
     var startPowerSaverMin;
     var endPowerSaverMin;
+    var rc2;
+    var rc4;
+    var rc5;
+    var rc7;
+    var rc9;
+    var rc10;
+    var rc12;
+    var rc17;
+    var rc20;
+    var rc30;
+    var rc40;
+    var rcN30;
+    var rcN40;
+    var rc70;
 	var sunriseStartAngle = 0;
 	var sunriseEndAngle = 0;
 	var sunsetStartAngle = 0;
@@ -326,9 +340,7 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
         }
 
         drawSteps(targetDc, activityInfo.steps, activityInfo.stepGoal, activityInfo.distance, deviceSettings.distanceUnits);
-        System.println("steps: " + activityInfo.steps + " step goal: " + activityInfo.stepGoal + " distance: " + activityInfo.distance);
         if (floorsClimbedSupported) {
-            System.println("floors climbed: " + activityInfo.floorsClimbed);
             drawFloors(targetDc, activityInfo.floorsClimbed, activityInfo.floorsDescended, activityInfo.floorsClimbedGoal);
         }
 
@@ -476,6 +488,20 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
     function computeConstants() {
         //computes hand lenght for watches with different screen resolution than 260x260
         screenResolutionRatio = screenRadius / 130.0; //130.0 = half of vivoactive4 resolution; used for coordinates recalculation
+        rc2 = recalculateCoordinate(2);
+        rc4 = recalculateCoordinate(4);
+        rc5 = recalculateCoordinate(5);
+        rc7 = recalculateCoordinate(7);
+        rc9 = recalculateCoordinate(9);
+        rc10 = recalculateCoordinate(10);
+        rc12 = recalculateCoordinate(12);
+        rc17 = recalculateCoordinate(17);
+        rc20 = recalculateCoordinate(20);
+        rc30 = recalculateCoordinate(30);
+        rc40 = recalculateCoordinate(40);
+        rcN30 = recalculateCoordinate(-30);
+        rcN40 = recalculateCoordinate(-40);
+        rc70 = recalculateCoordinate(70);
         hourHandLength = recalculateCoordinate(60);
         minuteHandLength = recalculateCoordinate(90);
         handsTailLength = recalculateCoordinate(15);
@@ -488,7 +514,7 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
 
         //Y coordinates of activities
         halfFontHeight = Graphics.getFontHeight(font) / 2;
-        activity1Y = screenRadius + recalculateCoordinate(10);
+        activity1Y = screenRadius + rc10;
         activity2Y = activity1Y + Graphics.getFontAscent(font);
         activityArcY = activity1Y + 1 + halfFontHeight;
 
@@ -519,14 +545,14 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
             angle = i * Math.PI * 2 / 60.0;
             if ((i % 15) == 0) { //quarter tick
                 if (ticks15MinWidth > 0) {
-                    ticks[i] = computeTickRectangle(angle, recalculateCoordinate(20), ticks15MinWidth);
+                    ticks[i] = computeTickRectangle(angle, rc20, ticks15MinWidth);
                 }
             } else if ((i % 5) == 0) { //5-minute tick
                 if (ticks5MinWidth > 0) {
-                    ticks[i] = computeTickRectangle(angle, recalculateCoordinate(20), ticks5MinWidth);
+                    ticks[i] = computeTickRectangle(angle, rc20, ticks5MinWidth);
                 }
             } else if (ticks1MinWidth > 0) { //1-minute tick
-                ticks[i] = computeTickRectangle(angle, recalculateCoordinate(10), ticks1MinWidth);
+                ticks[i] = computeTickRectangle(angle, rc10, ticks1MinWidth);
             }
         }
     }
@@ -555,9 +581,9 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
     }
 
     function drawSmartArc(dc, color, arcDirection, startAngle, endAngle) {
-        dc.setPenWidth(recalculateCoordinate(10));
+        dc.setPenWidth(rc10);
         dc.setColor(color, Graphics.COLOR_TRANSPARENT);
-        dc.drawArc(screenRadius, screenRadius, screenRadius - recalculateCoordinate(5), arcDirection, startAngle, endAngle);
+        dc.drawArc(screenRadius, screenRadius, screenRadius - rc5, arcDirection, startAngle, endAngle);
     }
 
     function drawTicks(dc) {
@@ -600,14 +626,14 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
         hourAngle = ((clockTime.hour % 12) * 60.0) + clockTime.min;
         hourAngle = hourAngle / (12 * 60.0) * Math.PI * 2;
         if (handsOutlineColor != offSettingFlag) {
-            drawHand(dc, handsOutlineColor, computeHandRectangle(hourAngle, hourHandLength + recalculateCoordinate(2), handsTailLength + recalculateCoordinate(2), hourHandWidth + recalculateCoordinate(4)));
+            drawHand(dc, handsOutlineColor, computeHandRectangle(hourAngle, hourHandLength + rc2, handsTailLength + rc2, hourHandWidth + rc4));
         }
         drawHand(dc, handsColor, computeHandRectangle(hourAngle, hourHandLength, handsTailLength, hourHandWidth));
 
         //draw minute hand
         minAngle = (clockTime.min / 60.0) * Math.PI * 2;
         if (handsOutlineColor != offSettingFlag) {
-            drawHand(dc, handsOutlineColor, computeHandRectangle(minAngle, minuteHandLength + recalculateCoordinate(2), handsTailLength + recalculateCoordinate(2), minuteHandWidth + recalculateCoordinate(4)));
+            drawHand(dc, handsOutlineColor, computeHandRectangle(minAngle, minuteHandLength + rc2, handsTailLength + rc2, minuteHandWidth + rc4));
         }
         drawHand(dc, handsColor, computeHandRectangle(minAngle, minuteHandLength, handsTailLength, minuteHandWidth));
 
@@ -617,7 +643,7 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
         dc.fillCircle(screenRadius, screenRadius, bulletRadius + 1);
         dc.setPenWidth(bulletRadius);
         dc.setColor(handsColor,Graphics.COLOR_TRANSPARENT);
-        dc.drawCircle(screenRadius, screenRadius, bulletRadius + recalculateCoordinate(2));
+        dc.drawCircle(screenRadius, screenRadius, bulletRadius + rc2);
     }
 
     function drawHand(dc, color, coords) {
@@ -722,7 +748,7 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
                     break;
         }
         dc.setColor(dateColor, Graphics.COLOR_TRANSPARENT);
-        dc.drawText(screenRadius, (screenRadius * 2) - recalculateCoordinate(30) - (halfFontHeight * 2), font, dateString, Graphics.TEXT_JUSTIFY_CENTER);
+        dc.drawText(screenRadius, (screenRadius * 2) - rc30 - (halfFontHeight * 2), font, dateString, Graphics.TEXT_JUSTIFY_CENTER);
     }
 
     function drawSteps(dc, steps, stepsGoal, distance, distanceUnits) {
@@ -741,7 +767,7 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
             distance = (distance/100000.0).format("%.2f");
         }
 
-        drawActivity(dc, STEPS, steps, distance, stepsGoal, recalculateCoordinate(70), activity1Y, activity2Y, activityArcY);
+        drawActivity(dc, STEPS, steps, distance, stepsGoal, rc70, activity1Y, activity2Y, activityArcY);
     }
 
     function drawFloors(dc, floorsClimbed, floorsDescended, floorsGoal) {
@@ -755,15 +781,15 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
             floorsGoal = 0;
         }
 
-        drawActivity(dc, STAIRS, floorsClimbed, floorsDescended.toString(), floorsGoal, recalculateCoordinate(-30), activity1Y, activity2Y, activityArcY);
+        drawActivity(dc, STAIRS, floorsClimbed, floorsDescended.toString(), floorsGoal, rcN30, activity1Y, activity2Y, activityArcY);
     }
 
     function drawBodyBattery(dc) {
-        drawActivity(dc, BODY_BATTERY, getLastHistoryValue(Toybox.SensorHistory.getBodyBatteryHistory({:period=>1})), -1, 100, recalculateCoordinate(40), screenRadius - (activity1Y - screenRadius + (halfFontHeight * 2)) - recalculateCoordinate(10 - 1), -1, screenRadius - (activityArcY - screenRadius) - recalculateCoordinate(7));
+        drawActivity(dc, BODY_BATTERY, getLastHistoryValue(Toybox.SensorHistory.getBodyBatteryHistory({:period=>1})), -1, 100, rc40, screenRadius - (activity1Y - screenRadius + (halfFontHeight * 2)) - rc9, -1, screenRadius - (activityArcY - screenRadius) - rc7);
     }
 
     function drawStress(dc) {
-        drawActivity(dc, STRESS, getLastHistoryValue(Toybox.SensorHistory.getStressHistory({:period=>1})), -1, 100, recalculateCoordinate(-40), screenRadius - (activity1Y - screenRadius + (halfFontHeight * 2)) - recalculateCoordinate(10 - 1), -1, screenRadius - (activityArcY - screenRadius) - recalculateCoordinate(7));
+        drawActivity(dc, STRESS, getLastHistoryValue(Toybox.SensorHistory.getStressHistory({:period=>1})), -1, 100, rcN40, screenRadius - (activity1Y - screenRadius + (halfFontHeight * 2)) - rc9, -1, screenRadius - (activityArcY - screenRadius) - rc7);
     }
 
     //activityType - 1 steps, 2 stairs, 3 body battery, 4 stress
@@ -775,7 +801,7 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
     //activity2Y - Y position of second line activity text
     //activityArcY - Y position of activity arc center
     function drawActivity(dc, activityType, activity1, activity2, goal, xShift, activity1Y, activity2Y, activityArcY) {
-        var progressXShift = xShift - recalculateCoordinate(5);
+        var progressXShift = xShift - rc5;
 
         dc.setColor(activityColor, Graphics.COLOR_TRANSPARENT);
         if (activity1 > 0 || activity2.toFloat() > 0 || showZero) {
@@ -792,7 +818,7 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
                 dc.drawText(screenRadius - xShift, activity1Y, font, activity1, Graphics.TEXT_JUSTIFY_LEFT);
             }
 
-            dc.setPenWidth(recalculateCoordinate(5));
+            dc.setPenWidth(rc5);
 
             if (activity1 > 0) {
                 dc.setColor(activityProgressGoalColor, Graphics.COLOR_TRANSPARENT);
@@ -813,7 +839,7 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
         }
         if (activityType <= STAIRS && (activity2.toFloat() > 0 || showZero)) {
             dc.setColor(activityColor, Graphics.COLOR_TRANSPARENT);
-            dc.drawText(screenRadius - xShift + recalculateCoordinate(20), activity2Y, font, activity2, Graphics.TEXT_JUSTIFY_LEFT);
+            dc.drawText(screenRadius - xShift + rc20, activity2Y, font, activity2, Graphics.TEXT_JUSTIFY_LEFT);
         }
     }
 
@@ -853,12 +879,12 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
             hrText = hr.format("%i");
         }
 
-        dc.setClip(screenRadius - halfHRTextWidth, recalculateCoordinate(30), hrTextDimension[0], hrTextDimension[1]);
+        dc.setClip(screenRadius - halfHRTextWidth, rc30, hrTextDimension[0], hrTextDimension[1]);
 
         dc.setColor(hrColor, Graphics.COLOR_TRANSPARENT);
         //debug rectangle
-        //dc.drawRectangle(screenRadius - halfHRTextWidth, recalculateCoordinate(30), hrTextDimension[0], hrTextDimension[1]);
-        dc.drawText(screenRadius, recalculateCoordinate(30), font, hrText, Graphics.TEXT_JUSTIFY_CENTER);
+        //dc.drawRectangle(screenRadius - halfHRTextWidth, rc30, hrTextDimension[0], hrTextDimension[1]);
+        dc.drawText(screenRadius, rc30, font, hrText, Graphics.TEXT_JUSTIFY_CENTER);
     }
 
     function shouldPowerSave() {
@@ -934,9 +960,9 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
                     ((sunriseEndAngle < sunsetStartAngle) && (sunriseEndAngle > sunsetEndAngle)) ||
                     ((sunsetStartAngle < sunriseStartAngle) && (sunsetStartAngle > sunriseEndAngle)) ||
                     ((sunsetEndAngle < sunriseStartAngle) && (sunsetEndAngle > sunriseEndAngle))) {
-                sunArcsOffset = recalculateCoordinate(10);
+                sunArcsOffset = rc10;
             } else {
-                sunArcsOffset = recalculateCoordinate(12);
+                sunArcsOffset = rc12;
             }
         }
 	}
@@ -951,9 +977,9 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
 	function drawSun(dc) {
         dc.setPenWidth(1);
 
-        var arcWidth = recalculateCoordinate(9);
-        if (sunArcsOffset == recalculateCoordinate(10)) {
-            arcWidth = recalculateCoordinate(7);
+        var arcWidth = rc9;
+        if (sunArcsOffset == rc10) {
+            arcWidth = rc7;
         }
 
         //draw sunrise
@@ -962,15 +988,15 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
     	        dc.setColor(sunriseColor, Graphics.COLOR_TRANSPARENT);
                 var step = (sunriseStartAngle - sunriseEndAngle) / arcWidth;
                 for (var i = 0; i < arcWidth; i++) {
-                    if (sunArcsOffset == recalculateCoordinate(10)) {
-				        dc.drawArc(screenRadius, screenRadius, screenRadius - recalculateCoordinate(20) + i, Graphics.ARC_CLOCKWISE, sunriseStartAngle - (step * i), sunriseEndAngle);
+                    if (sunArcsOffset == rc10) {
+				        dc.drawArc(screenRadius, screenRadius, screenRadius - rc20 + i, Graphics.ARC_CLOCKWISE, sunriseStartAngle - (step * i), sunriseEndAngle);
                     } else {
-				        dc.drawArc(screenRadius, screenRadius, screenRadius - recalculateCoordinate(12) - i, Graphics.ARC_CLOCKWISE, sunriseStartAngle - (step * i), sunriseEndAngle);
+				        dc.drawArc(screenRadius, screenRadius, screenRadius - rc12 - i, Graphics.ARC_CLOCKWISE, sunriseStartAngle - (step * i), sunriseEndAngle);
                     }
                 }
 			} else {
 		        dc.setColor(sunriseColor, Graphics.COLOR_TRANSPARENT);
-    			dc.drawArc(screenRadius, screenRadius, screenRadius - recalculateCoordinate(17), Graphics.ARC_COUNTER_CLOCKWISE, sunriseStartAngle, sunriseEndAngle);
+    			dc.drawArc(screenRadius, screenRadius, screenRadius - rc17, Graphics.ARC_COUNTER_CLOCKWISE, sunriseStartAngle, sunriseEndAngle);
 			}
 		}
 
