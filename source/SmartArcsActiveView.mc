@@ -49,6 +49,7 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
     var lastPhoneConnectedTime;
 
     //global variables for pre-computation
+    var screenWidth;
     var screenRadius;
     var screenResolutionRatio;
     var activity1Y;
@@ -79,6 +80,8 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
     var rcN30;
     var rcN40;
     var rc70;
+    var bbStressActivity1Y;
+    var bbStressArcY;
 	var sunriseStartAngle = 0;
 	var sunriseEndAngle = 0;
 	var sunsetStartAngle = 0;
@@ -163,7 +166,8 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
         bodyBatterySupported = (Toybox.SensorHistory has :getBodyBatteryHistory);
         stressSupported = (Toybox.SensorHistory has :getStressHistory);
 
-        screenRadius = dc.getWidth() / 2;
+        screenWidth = dc.getWidth();
+        screenRadius = screenWidth / 2;
         //TINY font for screen resolution 240 and lower, SMALL for higher resolution
         if (screenRadius <= 120) {
             font = Graphics.FONT_TINY;
@@ -518,6 +522,9 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
         activity2Y = activity1Y + Graphics.getFontAscent(font);
         activityArcY = activity1Y + 1 + halfFontHeight;
 
+        bbStressActivity1Y = screenRadius - (activity1Y - screenRadius + (halfFontHeight * 2)) - rc9;
+        bbStressArcY = screenRadius - (activityArcY - screenRadius) - rc7;
+
         halfHRTextWidth = hrTextDimension[0] / 2;
     }
 
@@ -540,7 +547,6 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
         var angle;
         ticks = new [16];
         //to save the memory compute only a quarter of the ticks, the rest will be mirrored.
-        //I believe it will still save some CPU utilization
         for (var i = 0; i < 16; i++) {
             angle = i * Math.PI * 2 / 60.0;
             if ((i % 15) == 0) { //quarter tick
@@ -588,31 +594,30 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
 
     function drawTicks(dc) {
         var coord = new [4];
-        var screenWidth = screenRadius * 2;
+        var tick;
         dc.setColor(ticksColor, Graphics.COLOR_TRANSPARENT);
         for (var i = 0; i < 16; i++) {
-        	//30-45 ticks
-            if (ticks[i] != null) {
-                dc.fillPolygon(ticks[i]);
-            }
+            tick = ticks[i];
+            if (tick != null) {
+                //30-45 ticks
+                dc.fillPolygon(tick);
 
-            //mirror pre-computed ticks
-            if (i >= 0 && i <= 15 && ticks[i] != null) {
+                //mirror pre-computed ticks
             	//15-30 ticks
                 for (var j = 0; j < 4; j++) {
-                    coord[j] = [screenWidth - ticks[i][j][0], ticks[i][j][1]];
+                    coord[j] = [screenWidth - tick[j][0], tick[j][1]];
                 }
                 dc.fillPolygon(coord);
 
 				//45-60 ticks
                 for (var j = 0; j < 4; j++) {
-                    coord[j] = [ticks[i][j][0], screenWidth - ticks[i][j][1]];
+                    coord[j] = [tick[j][0], screenWidth - tick[j][1]];
                 }
                 dc.fillPolygon(coord);
 
 				//0-15 ticks
                 for (var j = 0; j < 4; j++) {
-                    coord[j] = [screenWidth - ticks[i][j][0], screenWidth - ticks[i][j][1]];
+                    coord[j] = [screenWidth - tick[j][0], screenWidth - tick[j][1]];
                 }
                 dc.fillPolygon(coord);
             }
@@ -659,9 +664,11 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
 
     //Handle the partial update event
     function onPartialUpdate(dc) {
+        var inPowerSaver = shouldPowerSave();
+
         if ((showLostAndFound != offSettingFlag && 
                 (lastPhoneConnectedTime == null || Time.now().subtract(lastPhoneConnectedTime).value() > showLostAndFound)) ||
-                (powerSaverDrawn && shouldPowerSave())) {
+                (powerSaverDrawn && inPowerSaver)) {
             return;
         }
 
@@ -691,7 +698,7 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
             drawHR(dc, refreshHR);
         }
 
-        if (shouldPowerSave()) {
+        if (inPowerSaver) {
             requestUpdate();
         }
     }
@@ -707,29 +714,6 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
         if( null != offscreenBuffer ) {
             dc.drawBitmap(0, 0, offscreenBuffer);
         }
-    }
-
-    //Compute a bounding box from the passed in points
-    function getBoundingBox(points) {
-        var min = [9999,9999];
-        var max = [0,0];
-
-        for (var i = 0; i < points.size(); ++i) {
-            if(points[i][0] < min[0]) {
-                min[0] = points[i][0];
-            }
-            if(points[i][1] < min[1]) {
-                min[1] = points[i][1];
-            }
-            if(points[i][0] > max[0]) {
-                max[0] = points[i][0];
-            }
-            if(points[i][1] > max[1]) {
-                max[1] = points[i][1];
-            }
-        }
-
-        return [min, max];
     }
 
     function drawDate(dc) {
@@ -785,11 +769,11 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
     }
 
     function drawBodyBattery(dc) {
-        drawActivity(dc, BODY_BATTERY, getLastHistoryValue(Toybox.SensorHistory.getBodyBatteryHistory({:period=>1})), -1, 100, rc40, screenRadius - (activity1Y - screenRadius + (halfFontHeight * 2)) - rc9, -1, screenRadius - (activityArcY - screenRadius) - rc7);
+        drawActivity(dc, BODY_BATTERY, getLastHistoryValue(Toybox.SensorHistory.getBodyBatteryHistory({:period=>1})), -1, 100, rc40, bbStressActivity1Y, -1, bbStressArcY);
     }
 
     function drawStress(dc) {
-        drawActivity(dc, STRESS, getLastHistoryValue(Toybox.SensorHistory.getStressHistory({:period=>1})), -1, 100, rcN40, screenRadius - (activity1Y - screenRadius + (halfFontHeight * 2)) - rc9, -1, screenRadius - (activityArcY - screenRadius) - rc7);
+        drawActivity(dc, STRESS, getLastHistoryValue(Toybox.SensorHistory.getStressHistory({:period=>1})), -1, 100, rcN40, bbStressActivity1Y, -1, bbStressArcY);
     }
 
     //activityType - 1 steps, 2 stairs, 3 body battery, 4 stress
@@ -804,7 +788,7 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
         var progressXShift = xShift - rc5;
 
         dc.setColor(activityColor, Graphics.COLOR_TRANSPARENT);
-        if (activity1 > 0 || activity2.toFloat() > 0 || showZero) {
+        if (activity1 > 0 || (activityType <= STAIRS && activity2.toFloat() > 0) || showZero) {
             dc.setPenWidth(1);
             dc.drawArc(screenRadius - progressXShift, activityArcY, halfFontHeight - 1, Graphics.ARC_COUNTER_CLOCKWISE, startActivityAngle, endActivityAngle);
             dc.drawArc(screenRadius - progressXShift, activityArcY, halfFontHeight + 3, Graphics.ARC_COUNTER_CLOCKWISE, startActivityAngle, endActivityAngle);
@@ -845,7 +829,7 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
 
     function getLastHistoryValue(iterator) {
         var value = iterator.next();
-        if (value == null) {
+        if (value == null || value.data == null) {
             return 999999;
         } else {
             return value.data.toNumber();
@@ -951,10 +935,25 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
 				locationLongitude = loc[1];
 			}
 			
-	        sunriseStartAngle = computeSunAngle(sc.calculate(time_now, loc, SunCalc.DAWN));	        
-	        sunriseEndAngle = computeSunAngle(sc.calculate(time_now, loc, SunCalc.SUNRISE));
-	        sunsetStartAngle = computeSunAngle(sc.calculate(time_now, loc, SunCalc.SUNSET));
-	        sunsetEndAngle = computeSunAngle(sc.calculate(time_now, loc, SunCalc.DUSK));
+            var dawn = sc.calculate(time_now, loc, SunCalc.DAWN);
+            var sunrise = sc.calculate(time_now, loc, SunCalc.SUNRISE);
+            var sunset = sc.calculate(time_now, loc, SunCalc.SUNSET);
+            var dusk = sc.calculate(time_now, loc, SunCalc.DUSK);
+
+            if (dawn == null || sunrise == null || sunset == null || dusk == null) {
+                //polar day or polar night — no valid sun times
+                sunriseStartAngle = 0;
+                sunriseEndAngle = 0;
+                sunsetStartAngle = 0;
+                sunsetEndAngle = 0;
+                locationLatitude = offSettingFlag;
+                return;
+            }
+
+	        sunriseStartAngle = computeSunAngle(dawn);
+	        sunriseEndAngle = computeSunAngle(sunrise);
+	        sunsetStartAngle = computeSunAngle(sunset);
+	        sunsetEndAngle = computeSunAngle(dusk);
 
             if (((sunriseStartAngle < sunsetStartAngle) && (sunriseStartAngle > sunsetEndAngle)) ||
                     ((sunriseEndAngle < sunsetStartAngle) && (sunriseEndAngle > sunsetEndAngle)) ||
@@ -987,12 +986,10 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
 	        if (sunriseStartAngle > sunriseEndAngle) {
     	        dc.setColor(sunriseColor, Graphics.COLOR_TRANSPARENT);
                 var step = (sunriseStartAngle - sunriseEndAngle) / arcWidth;
+                var baseRadius = (sunArcsOffset == rc10) ? screenRadius - rc20 : screenRadius - rc12;
+                var radiusStep = (sunArcsOffset == rc10) ? 1 : -1;
                 for (var i = 0; i < arcWidth; i++) {
-                    if (sunArcsOffset == rc10) {
-				        dc.drawArc(screenRadius, screenRadius, screenRadius - rc20 + i, Graphics.ARC_CLOCKWISE, sunriseStartAngle - (step * i), sunriseEndAngle);
-                    } else {
-				        dc.drawArc(screenRadius, screenRadius, screenRadius - rc12 - i, Graphics.ARC_CLOCKWISE, sunriseStartAngle - (step * i), sunriseEndAngle);
-                    }
+				    dc.drawArc(screenRadius, screenRadius, baseRadius + (radiusStep * i), Graphics.ARC_CLOCKWISE, sunriseStartAngle - (step * i), sunriseEndAngle);
                 }
 			} else {
 		        dc.setColor(sunriseColor, Graphics.COLOR_TRANSPARENT);
