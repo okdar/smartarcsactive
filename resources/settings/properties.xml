@@ -104,7 +104,7 @@
 
         <string id="bluetoothColor">Bluetooth indicator color (off or color)</string>
 
-        <string id="dndColor">Do not disturb indicator color (off or color)</string>
+        <string id="dndColor">Do Not Disturb indicator color (off or color)</string>
 
         <string id="alarmColor">Alarm indicator color (off or color)</string>
 
@@ -112,7 +112,7 @@
         <string id="sunsetColor">Sunset indicator color (off or color)</string>
 
         <string id="activityColor">Activity text color</string>
-        <string id="activityProgressGoalColor">Progress towards the goal indicator color</string>
+        <string id="activityProgressGoalColor">Progress toward goal indicator color</string>
         <string id="activityReachedGoalColor">Reached goal indicator color</string>
         <string id="showZero">Show activities with 'zero' value</string>
 
@@ -207,8 +207,8 @@
         <string id="powerSaver">Power saver</string>
         <string id="powerSaverNever">Never</string>
         <string id="powerSaverWindow">In defined time window</string>
-        <string id="powerSaverBeginning">Power saver begins at (hh:mm, 24h format)</string>
-        <string id="powerSaverEnd">Power saver ends at (hh:mm, 24h format)</string>
+        <string id="powerSaverBeginning">Power saver begins at (hh:mm, 24-hour format)</string>
+        <string id="powerSaverEnd">Power saver ends at (hh:mm, 24-hour format)</string>
         <string id="powerSaverRefreshInterval">Screen refresh interval in power saver mode (minutes)</string>
         <string id="powerSaver0">Never</string>
         <string id="powerSaver5">5</string>
