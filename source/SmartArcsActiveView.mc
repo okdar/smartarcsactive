@@ -166,6 +166,9 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
     //the state of this View and prepare it to be shown. This includes
     //loading resources into memory.
     function onShow() {
+        isAwake = true;
+        powerSaverDrawn = false;
+        requestUpdate();
     }
 
     //update the view
@@ -323,7 +326,9 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
         }
 
         drawSteps(targetDc, activityInfo.steps, activityInfo.stepGoal, activityInfo.distance, deviceSettings.distanceUnits);
+        System.println("steps: " + activityInfo.steps + " step goal: " + activityInfo.stepGoal + " distance: " + activityInfo.distance);
         if (floorsClimbedSupported) {
+            System.println("floors climbed: " + activityInfo.floorsClimbed);
             drawFloors(targetDc, activityInfo.floorsClimbed, activityInfo.floorsDescended, activityInfo.floorsClimbedGoal);
         }
 
@@ -356,8 +361,8 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
 
     //the user has just looked at their watch. Timers and animations may be started here.
     function onExitSleep() {
-        requestUpdate();
         isAwake = true;
+        requestUpdate();
     }
 
     //terminate any active timers and prepare for slow updates.
