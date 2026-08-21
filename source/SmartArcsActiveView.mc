@@ -39,6 +39,7 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
     var floorsClimbedSupported = false;
     var bodyBatterySupported = false;
     var stressSupported = false;
+    var curClip;
     var fullScreenRefresh;
     var offscreenBuffer;
     var offSettingFlag = -999;
@@ -59,7 +60,10 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
     var ticks = null;
     var hourHandLength;
     var minuteHandLength;
+    var secondHandDotDistance;
+    var secondHandDotRadius;
     var handsTailLength;
+    var bulletRadius;
     var startActivityAngle = 90;
     var endActivityAngle = 300;
     var hrTextDimension;
@@ -93,8 +97,12 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
     var bgColor;
     var handsColor;
     var handsOutlineColor;
+    var secondHandColor;
     var hourHandWidth;
     var minuteHandWidth;
+    var showSecondHand;
+    var secondHandWidth;
+    var useBatterySecondHandColor;
     var battery100Color;
     var battery30Color;
     var battery15Color;
@@ -178,6 +186,8 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
 
         loadUserSettings();
         fullScreenRefresh = true;
+
+        curClip = null;
     }
 
     //called when this View is brought to the foreground. Restore
@@ -275,6 +285,7 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
             //set the draw context of that buffer as our target.
             targetDc = offscreenBuffer.getDc();
             dc.clearClip();
+            curClip = null;
         } else {
             targetDc = dc;
         }
@@ -360,10 +371,19 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
             drawHands(targetDc, clockTime);
         }
 
+        //devices without partial-update support animate the second hand dot through onUpdate while awake
+        if (isAwake && showSecondHand > 0 && !partialUpdatesAllowed) {
+            drawSecondHandDot(targetDc, clockTime.sec);
+        }
+
         //output the offscreen buffers to the main display if required.
         drawBackground(dc);
 
-        if (partialUpdatesAllowed && (hrColor != offSettingFlag)) {
+        //partial updates refresh HR and the second hand dot every second:
+        // - "always" (2): dot in both awake and sleep modes
+        // - "when awake" (1): dot only while awake
+        if (partialUpdatesAllowed &&
+                (hrColor != offSettingFlag || showSecondHand == 2 || (showSecondHand == 1 && isAwake))) {
             onPartialUpdate(dc);
         }
 
@@ -399,6 +419,7 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
             bluetoothColor = app.getProperty("bluetoothColor");
             dndColor = app.getProperty("dndColor");
             alarmColor = app.getProperty("alarmColor");
+            secondHandColor = app.getProperty("secondHandColor");
             activityProgressGoalColor = app.getProperty("activityProgressGoalColor");
             activityReachedGoalColor = app.getProperty("activityReachedGoalColor");
             bbStressArcColor = app.getProperty("bbStressArcColor");
@@ -410,6 +431,7 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
             bluetoothColor = oneColor;
             dndColor = oneColor;
             alarmColor = oneColor;
+            secondHandColor = oneColor;
             activityProgressGoalColor = oneColor;
             activityReachedGoalColor = oneColor;
             bbStressArcColor = oneColor;
@@ -428,6 +450,11 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
         handsOutlineColor = app.getProperty("handsOutlineColor");
         hourHandWidth = app.getProperty("hourHandWidth");
         minuteHandWidth = app.getProperty("minuteHandWidth");
+        showSecondHand = app.getProperty("showSecondHand");
+        if (showSecondHand > 0) {
+            secondHandWidth = app.getProperty("secondHandWidth");
+        }
+        useBatterySecondHandColor = app.getProperty("useBatterySecondHandColor");
         activityColor = app.getProperty("activityColor");
         dateColor = app.getProperty("dateColor");
         showZero = app.getProperty("showZero");
@@ -509,6 +536,12 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
         hourHandLength = recalculateCoordinate(60);
         minuteHandLength = recalculateCoordinate(90);
         handsTailLength = recalculateCoordinate(15);
+        bulletRadius = (hourHandWidth > minuteHandWidth ? hourHandWidth : minuteHandWidth) / 2;
+        if (showSecondHand > 0) {
+            //second hand dot sits between the minute hand tip and the minute ticks
+            secondHandDotDistance = recalculateCoordinate(100);
+            secondHandDotRadius = secondHandWidth + rc2;
+        }
         
         if (!((ticksColor == offSettingFlag) ||
             (ticksColor != offSettingFlag && ticks1MinWidth == 0 && ticks5MinWidth == 0 && ticks15MinWidth == 0))) {
@@ -643,12 +676,47 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
         drawHand(dc, handsColor, computeHandRectangle(minAngle, minuteHandLength, handsTailLength, minuteHandWidth));
 
         //draw bullet
-        var bulletRadius = hourHandWidth > minuteHandWidth ? hourHandWidth / 2 : minuteHandWidth / 2;
         dc.setColor(bgColor, Graphics.COLOR_TRANSPARENT);
         dc.fillCircle(screenRadius, screenRadius, bulletRadius + 1);
         dc.setPenWidth(bulletRadius);
-        dc.setColor(handsColor,Graphics.COLOR_TRANSPARENT);
+        dc.setColor(handsColor, Graphics.COLOR_TRANSPARENT);
         dc.drawCircle(screenRadius, screenRadius, bulletRadius + rc2);
+    }
+
+    //draws the second hand as a small dot between the minute hand tip and the minute ticks
+    function drawSecondHandDot(dc, seconds) {
+        var dot = computeSecondHandDot(seconds);
+        dc.setColor(getSecondHandColor(), Graphics.COLOR_TRANSPARENT);
+        dc.fillCircle(dot[0], dot[1], secondHandDotRadius);
+    }
+
+    //returns the [x, y] screen position of the second hand dot for the given seconds
+    function computeSecondHandDot(seconds) {
+        var secAngle = (seconds / 60.0) * Math.PI * 2;
+        return [
+            screenRadius + (secondHandDotDistance * Math.sin(secAngle)).toNumber(),
+            screenRadius - (secondHandDotDistance * Math.cos(secAngle)).toNumber()
+        ];
+    }
+
+    function getSecondHandColor() {
+        var color;
+        if (oneColor != offSettingFlag) {
+            color = oneColor;
+        } else if (useBatterySecondHandColor) {
+            var batStat = System.getSystemStats().battery;
+            if (batStat > 30) {
+                color = battery100Color;
+            } else if (batStat <= 30 && batStat > 15) {
+                color = battery30Color;
+            } else {
+                color = battery15Color;
+            }
+        } else {
+            color = secondHandColor;
+        }
+
+        return color;
     }
 
     function drawHand(dc, color, coords) {
@@ -674,28 +742,58 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
 
         powerSaverDrawn = false;
 
-        var refreshHR = false;
         var clockSeconds = System.getClockTime().sec;
+        //second hand dot is shown for "always" (2), or for "when awake" (1) only while awake
+        var showSecHandNow = (showSecondHand == 2) || (showSecondHand == 1 && isAwake);
 
         //should be HR refreshed?
+        var refreshHR = false;
         if (hrColor != offSettingFlag) {
-            if (hrRefreshInterval == 1) {
-                refreshHR = true;
-            } else if (clockSeconds % hrRefreshInterval == 0) {
+            if (hrRefreshInterval == 1 || clockSeconds % hrRefreshInterval == 0) {
                 refreshHR = true;
             }
         }
 
-        //if we're not doing a full screen refresh we need to re-draw the background
-        //before drawing the updated second hand position. Note this will only re-draw
-        //the background in the area specified by the previously computed clipping region.
-        if(!fullScreenRefresh) {
+        //erase the second hand dot drawn in the previous partial update (its area is stored in curClip)
+        if (!fullScreenRefresh && curClip != null) {
+            dc.setClip(curClip[0][0], curClip[0][1],
+                curClip[1][0] - curClip[0][0] + 1, curClip[1][1] - curClip[0][1] + 1);
             drawBackground(dc);
         }
+        curClip = null;
 
-        //draw HR
+        //draw HR in its own small clip region
         if (hrColor != offSettingFlag) {
+            dc.setClip(screenRadius - halfHRTextWidth, rc30, hrTextDimension[0], hrTextDimension[1]);
+            if (!fullScreenRefresh) {
+                drawBackground(dc);
+            }
             drawHR(dc, refreshHR);
+
+            //debug rectangle around the HR clip
+            // dc.setPenWidth(1);
+            // dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
+            // dc.drawRectangle(screenRadius - halfHRTextWidth, rc30, hrTextDimension[0], hrTextDimension[1]);
+        }
+
+        //draw the second hand dot in its own small clip region
+        if (showSecHandNow) {
+            var dot = computeSecondHandDot(clockSeconds);
+            var r = secondHandDotRadius + 1;
+            var boxX = dot[0] - r;
+            var boxY = dot[1] - r;
+            var boxSize = 2 * r + 1;
+            curClip = [[boxX, boxY], [boxX + boxSize - 1, boxY + boxSize - 1]];
+
+            dc.setClip(boxX, boxY, boxSize, boxSize);
+            drawBackground(dc);
+            dc.setColor(getSecondHandColor(), Graphics.COLOR_TRANSPARENT);
+            dc.fillCircle(dot[0], dot[1], secondHandDotRadius);
+
+            //debug rectangle around the second hand dot clip
+            // dc.setPenWidth(1);
+            // dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
+            // dc.drawRectangle(boxX, boxY, boxSize, boxSize);
         }
 
         if (inPowerSaver) {
@@ -863,11 +961,8 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
             hrText = hr.format("%i");
         }
 
-        dc.setClip(screenRadius - halfHRTextWidth, rc30, hrTextDimension[0], hrTextDimension[1]);
-
+        //clip and debug rectangle are managed by the caller (onPartialUpdate)
         dc.setColor(hrColor, Graphics.COLOR_TRANSPARENT);
-        //debug rectangle
-        //dc.drawRectangle(screenRadius - halfHRTextWidth, rc30, hrTextDimension[0], hrTextDimension[1]);
         dc.drawText(screenRadius, rc30, font, hrText, Graphics.TEXT_JUSTIFY_CENTER);
     }
 
