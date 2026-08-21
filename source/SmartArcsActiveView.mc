@@ -62,6 +62,7 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
     var minuteHandLength;
     var secondHandDotDistance;
     var secondHandDotRadius;
+    var secondHandDots; //pre-computed [x, y] screen position for each of the 60 seconds
     var handsTailLength;
     var bulletRadius;
     var startActivityAngle = 90;
@@ -541,6 +542,15 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
             //second hand dot sits between the minute hand tip and the minute ticks
             secondHandDotDistance = recalculateCoordinate(100);
             secondHandDotRadius = secondHandWidth + rc2;
+            //pre-compute all 60 dot positions to avoid trig and allocation on the per-second path
+            secondHandDots = new [60];
+            for (var i = 0; i < 60; i++) {
+                var secAngle = (i / 60.0) * Math.PI * 2;
+                secondHandDots[i] = [
+                    screenRadius + (secondHandDotDistance * Math.sin(secAngle)).toNumber(),
+                    screenRadius - (secondHandDotDistance * Math.cos(secAngle)).toNumber()
+                ];
+            }
         }
         
         if (!((ticksColor == offSettingFlag) ||
@@ -690,13 +700,9 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
         dc.fillCircle(dot[0], dot[1], secondHandDotRadius);
     }
 
-    //returns the [x, y] screen position of the second hand dot for the given seconds
+    //returns the pre-computed [x, y] screen position of the second hand dot for the given seconds
     function computeSecondHandDot(seconds) {
-        var secAngle = (seconds / 60.0) * Math.PI * 2;
-        return [
-            screenRadius + (secondHandDotDistance * Math.sin(secAngle)).toNumber(),
-            screenRadius - (secondHandDotDistance * Math.cos(secAngle)).toNumber()
-        ];
+        return secondHandDots[seconds];
     }
 
     function getSecondHandColor() {
