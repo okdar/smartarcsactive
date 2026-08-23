@@ -48,6 +48,9 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
     var powerSaverDrawn = false;
     var sunArcsOffset;
     var lastPhoneConnectedTime;
+    var batteryLevel; //cached once per minute in onUpdate to avoid per-second reads
+    var cachedDateString;
+    var cachedDateValue = -1; //Time.today().value() the cached date string was built for
 
     //global variables for pre-computation
     var screenWidth;
@@ -270,6 +273,9 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
         //regular update path
         powerSaverDrawn = false;
 
+        //refresh battery once per minute; reused by the battery arc and the second hand color
+        batteryLevel = System.getSystemStats().battery;
+
         var activityInfo = ActivityMonitor.getInfo();
 
 		if (clockTime.min == 0) {
@@ -296,19 +302,18 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
         targetDc.fillCircle(screenRadius, screenRadius, screenRadius + 2);
 
         if (showBatteryIndicator) {
-            var batStat = System.getSystemStats().battery;
             if (oneColor != offSettingFlag) {
-                drawSmartArc(targetDc, oneColor, Graphics.ARC_CLOCKWISE, 180, 180 - 0.9 * batStat);
+                drawSmartArc(targetDc, oneColor, Graphics.ARC_CLOCKWISE, 180, 180 - 0.9 * batteryLevel);
             } else {
-                if (batStat > 30) {
-                    drawSmartArc(targetDc, battery100Color, Graphics.ARC_CLOCKWISE, 180, 180 - 0.9 * batStat);
+                if (batteryLevel > 30) {
+                    drawSmartArc(targetDc, battery100Color, Graphics.ARC_CLOCKWISE, 180, 180 - 0.9 * batteryLevel);
                     drawSmartArc(targetDc, battery30Color, Graphics.ARC_CLOCKWISE, 180, 153);
                     drawSmartArc(targetDc, battery15Color, Graphics.ARC_CLOCKWISE, 180, 166.5);
-                } else if (batStat <= 30 && batStat > 15) {
-                    drawSmartArc(targetDc, battery30Color, Graphics.ARC_CLOCKWISE, 180, 180 - 0.9 * batStat);
+                } else if (batteryLevel <= 30 && batteryLevel > 15) {
+                    drawSmartArc(targetDc, battery30Color, Graphics.ARC_CLOCKWISE, 180, 180 - 0.9 * batteryLevel);
                     drawSmartArc(targetDc, battery15Color, Graphics.ARC_CLOCKWISE, 180, 166.5);
                 } else {
-                    drawSmartArc(targetDc, battery15Color, Graphics.ARC_CLOCKWISE, 180, 180 - 0.9 * batStat);
+                    drawSmartArc(targetDc, battery15Color, Graphics.ARC_CLOCKWISE, 180, 180 - 0.9 * batteryLevel);
                 }
             }
         }
@@ -385,7 +390,9 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
         // - "when awake" (1): dot only while awake
         if (partialUpdatesAllowed &&
                 (hrColor != offSettingFlag || showSecondHand == 2 || (showSecondHand == 1 && isAwake))) {
-            onPartialUpdate(dc);
+            //reuse the timestamp captured at the start of onUpdate; re-reading the clock here
+            //would skip a second because the full redraw above can cross a second boundary
+            partialUpdate(dc, clockTime.sec);
         }
 
         fullScreenRefresh = false;
@@ -569,6 +576,9 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
         bbStressArcY = screenRadius - (activityArcY - screenRadius) - rc7;
 
         halfHRTextWidth = hrTextDimension[0] / 2;
+
+        //invalidate cached date so a changed date format is picked up
+        cachedDateValue = -1;
     }
 
     function parsePowerSaverTime(time) {
@@ -710,10 +720,9 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
         if (oneColor != offSettingFlag) {
             color = oneColor;
         } else if (useBatterySecondHandColor) {
-            var batStat = System.getSystemStats().battery;
-            if (batStat > 30) {
+            if (batteryLevel > 30) {
                 color = battery100Color;
-            } else if (batStat <= 30 && batStat > 15) {
+            } else if (batteryLevel <= 30 && batteryLevel > 15) {
                 color = battery30Color;
             } else {
                 color = battery15Color;
@@ -738,6 +747,10 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
 
     //Handle the partial update event
     function onPartialUpdate(dc) {
+        partialUpdate(dc, System.getClockTime().sec);
+    }
+
+    function partialUpdate(dc, clockSeconds) {
         var inPowerSaver = shouldPowerSave();
 
         if ((showLostAndFound != offSettingFlag && 
@@ -748,7 +761,6 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
 
         powerSaverDrawn = false;
 
-        var clockSeconds = System.getClockTime().sec;
         //second hand dot is shown for "always" (2), or for "when awake" (1) only while awake
         var showSecHandNow = (showSecondHand == 2) || (showSecondHand == 1 && isAwake);
 
@@ -821,22 +833,29 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
     }
 
     function drawDate(dc) {
-        var dateString = "";
-        var dateInfo = Gregorian.info(Time.today(), Time.FORMAT_MEDIUM);
-        switch (dateFormat) {
-            case 0: dateString = dateInfo.day;
-                    break;
-            case 1: dateString = Lang.format("$1$ $2$", [dateInfo.day_of_week.substring(0, 3), dateInfo.day]);
-                    break;
-            case 2: dateString = Lang.format("$1$ $2$", [dateInfo.day, dateInfo.day_of_week.substring(0, 3)]);
-                    break;
-            case 3: dateString = Lang.format("$1$ $2$", [dateInfo.day, dateInfo.month.substring(0, 3)]);
-                    break;
-            case 4: dateString = Lang.format("$1$ $2$", [dateInfo.month.substring(0, 3), dateInfo.day]);
-                    break;
+        var today = Time.today();
+        var todayValue = today.value();
+        //date changes only once per day (or on settings change) - rebuild the string only then
+        if (cachedDateValue != todayValue) {
+            var dateString = "";
+            var dateInfo = Gregorian.info(today, Time.FORMAT_MEDIUM);
+            switch (dateFormat) {
+                case 0: dateString = dateInfo.day;
+                        break;
+                case 1: dateString = Lang.format("$1$ $2$", [dateInfo.day_of_week.substring(0, 3), dateInfo.day]);
+                        break;
+                case 2: dateString = Lang.format("$1$ $2$", [dateInfo.day, dateInfo.day_of_week.substring(0, 3)]);
+                        break;
+                case 3: dateString = Lang.format("$1$ $2$", [dateInfo.day, dateInfo.month.substring(0, 3)]);
+                        break;
+                case 4: dateString = Lang.format("$1$ $2$", [dateInfo.month.substring(0, 3), dateInfo.day]);
+                        break;
+            }
+            cachedDateString = dateString;
+            cachedDateValue = todayValue;
         }
         dc.setColor(dateColor, Graphics.COLOR_TRANSPARENT);
-        dc.drawText(screenRadius, (screenRadius * 2) - rc30 - (halfFontHeight * 2), font, dateString, Graphics.TEXT_JUSTIFY_CENTER);
+        dc.drawText(screenRadius, (screenRadius * 2) - rc30 - (halfFontHeight * 2), font, cachedDateString, Graphics.TEXT_JUSTIFY_CENTER);
     }
 
     function drawSteps(dc, steps, stepsGoal, distance, distanceUnits) {
