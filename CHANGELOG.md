@@ -1,3 +1,8 @@
+# 4.0.0 (August 23, 2026)
+* added 'second-hand' dot
+* fixed draw in DnD mode with power saver
+* under the hood optimization - reduced CPU utilization and memory allocation
+
 # 3.0.1 (May 13, 2025)
 * minor bugfix (drawDate)
 
