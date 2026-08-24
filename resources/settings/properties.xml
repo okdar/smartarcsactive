@@ -1,6 +1,6 @@
 <!--
     This file is part of SmartArcs Active watch face.
-    https://github.com/okdar/smartarcs
+    https://github.com/okdar/smartarcsactive
 
     SmartArcs Active is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@
         <property id="handsOutlineColor" type="number">-999</property>
         <property id="hourHandWidth" type="number">4</property>
         <property id="minuteHandWidth" type="number">4</property>
-        <property id="secondHandWidth" type="number">2</property>
+        <property id="secondHandWidth" type="number">3</property>
         <property id="useBatterySecondHandColor" type="boolean">false</property>
         <property id="secondHandColor" type="number">0x00FF00</property>
         <property id="handsOnTop" type="boolean">false</property>
@@ -87,20 +87,20 @@
         <string id="ticksColor">Ticks color (off or color)</string>
         <string id="ticks1MinWidth">1-minute ticks width</string>
         <string id="ticks5MinWidth">5-minute ticks width</string>
-        <string id="ticks15MinWidth">Quarter ticks width</string>
+        <string id="ticks15MinWidth">Quarter-hour ticks width</string>
         <string id="ticks1MinError">Value range: 0 to 5</string>
         <string id="ticks5MinError">Value range: 0 to 10</string>
         <string id="handsColor">Hands color</string>
         <string id="handsOutlineColor">Hands outline color (off or color)</string>
         <string id="hourHandWidth">Hour hand width</string>
         <string id="minuteHandWidth">Minute hand width</string>
-        <string id="secondHandWidth">Second hand dot size</string>
+        <string id="secondHandWidth">Seconds dot size</string>
         <string id="handWidthError">Value range: 1 to 10</string>
         <string id="secondHandWidthError">Value range: 0 to 5</string>
-        <string id="useBatterySecondHandColor">Use battery status colors for second hand (overrides second hand color setting below)</string>
-        <string id="secondHandColor">Second hand color</string>
+        <string id="useBatterySecondHandColor">Use battery status colors for seconds dot (overrides seconds dot color setting below)</string>
+        <string id="secondHandColor">Seconds dot color</string>
         <string id="handsOnTop">Draw hands on top of activity indicators</string>
-        <string id="showSecondHand">Show second hand</string>
+        <string id="showSecondHand">Show seconds dot</string>
         <string id="secondHandNever">Never</string>
         <string id="secondHandAwake">When awake</string>
         <string id="secondHandAlways">Always</string>
@@ -125,7 +125,7 @@
 
         <string id="activityColor">Activity text color</string>
         <string id="activityProgressGoalColor">Progress toward goal indicator color</string>
-        <string id="activityReachedGoalColor">Reached goal indicator color</string>
+        <string id="activityReachedGoalColor">Goal reached indicator color</string>
         <string id="showZero">Show activities with 'zero' value</string>
 
         <string id="showBb">Show body battery</string>
@@ -218,7 +218,7 @@
 
         <string id="powerSaver">Power saver</string>
         <string id="powerSaverNever">Never</string>
-        <string id="powerSaverWindow">In defined time window</string>
+        <string id="powerSaverWindow">In a defined time window</string>
         <string id="powerSaverBeginning">Power saver begins at (hh:mm, 24-hour format)</string>
         <string id="powerSaverEnd">Power saver ends at (hh:mm, 24-hour format)</string>
         <string id="powerSaverRefreshInterval">Screen refresh interval in power saver mode (minutes)</string>

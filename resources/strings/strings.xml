@@ -1,6 +1,6 @@
 <!--
     This file is part of SmartArcs Active watch face.
-    https://github.com/okdar/smartarcs
+    https://github.com/okdar/smartarcsactive
 
     SmartArcs Active is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,4 +18,11 @@
 
 <strings>
     <string id="AppName">SmartArcs Active</string>
+    <string id="settingsMenuTitle">Settings</string>
+    <string id="showHrMenuTitle">Heart rate</string>
+    <string id="showSecondHandMenuTitle">Seconds dot</string>
+    <string id="showBbMenuTitle">Body battery</string>
+    <string id="showStressMenuTitle">Stress</string>
+    <string id="powerSaverMenuTitle">Power saver</string>
+    <string id="showLostAndFoundMenuTitle">Lost and found</string>
 </strings>

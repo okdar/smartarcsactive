@@ -1,6 +1,6 @@
 /*
     This file is part of SmartArcs Active watch face.
-    https://github.com/okdar/smartarcs
+    https://github.com/okdar/smartarcsactive
 
     SmartArcs Active is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 */
 
 using Toybox.Application;
+using Toybox.WatchUi;
 
 class SmartArcsActiveApp extends Application.AppBase {
 
@@ -44,6 +45,48 @@ class SmartArcsActiveApp extends Application.AppBase {
     function onSettingsChanged() {
         view.loadUserSettings();
         view.requestUpdate(); //update the view to reflect changes
+    }
+
+    // on-device settings screen to quickly toggle heart rate and second-hand dot
+    function getSettingsView() {
+        var menu = new WatchUi.Menu2({ :title => WatchUi.loadResource(Rez.Strings.settingsMenuTitle) });
+        menu.addItem(new WatchUi.ToggleMenuItem(
+            WatchUi.loadResource(Rez.Strings.showHrMenuTitle),
+            null,
+            "showHr",
+            getProperty("hrColor") != -999,
+            null));
+        menu.addItem(new WatchUi.ToggleMenuItem(
+            WatchUi.loadResource(Rez.Strings.showSecondHandMenuTitle),
+            null,
+            "showSecondHand",
+            getProperty("showSecondHand") != 0,
+            null));
+        menu.addItem(new WatchUi.ToggleMenuItem(
+            WatchUi.loadResource(Rez.Strings.showBbMenuTitle),
+            null,
+            "showBb",
+            getProperty("showBb"),
+            null));
+        menu.addItem(new WatchUi.ToggleMenuItem(
+            WatchUi.loadResource(Rez.Strings.showStressMenuTitle),
+            null,
+            "showStress",
+            getProperty("showStress"),
+            null));
+        menu.addItem(new WatchUi.ToggleMenuItem(
+            WatchUi.loadResource(Rez.Strings.powerSaverMenuTitle),
+            null,
+            "powerSaver",
+            getProperty("powerSaver") != 1,
+            null));
+        menu.addItem(new WatchUi.ToggleMenuItem(
+            WatchUi.loadResource(Rez.Strings.showLostAndFoundMenuTitle),
+            null,
+            "showLostAndFound",
+            getProperty("showLostAndFound") != -999,
+            null));
+        return [menu, new SmartArcsActiveSettingsMenuDelegate()];
     }
 
 }

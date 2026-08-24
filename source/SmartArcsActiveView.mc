@@ -200,6 +200,7 @@ class SmartArcsActiveView extends WatchUi.WatchFace {
     function onShow() {
         isAwake = true;
         powerSaverDrawn = false;
+        loadUserSettings(); //pick up changes made in the on-device settings menu
         requestUpdate();
     }
 

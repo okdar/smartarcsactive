@@ -1,3 +1,6 @@
+# 5.0.0 (August 24, 2026)
+* watch face on-screen settings
+
 # 4.0.0 (August 23, 2026)
 * added 'second-hand' dot
 * fixed draw in DnD mode with power saver
