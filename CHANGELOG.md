@@ -1,5 +1,6 @@
-# 5.0.0 (August 24, 2026)
-* watch face on-screen settings
+# 5.0.0 (August 25, 2026)
+* added watch face on-device settings
+* fixed use of deprecated API methods
 
 # 4.0.0 (August 23, 2026)
 * added 'second-hand' dot
