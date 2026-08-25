@@ -54,37 +54,37 @@ class SmartArcsActiveApp extends Application.AppBase {
             WatchUi.loadResource(Rez.Strings.showHrMenuTitle),
             null,
             "showHr",
-            getProperty("hrColor") != -999,
+            Application.Properties.getValue("hrColor") != -999,
             null));
         menu.addItem(new WatchUi.ToggleMenuItem(
             WatchUi.loadResource(Rez.Strings.showSecondHandMenuTitle),
             null,
             "showSecondHand",
-            getProperty("showSecondHand") != 0,
+            Application.Properties.getValue("showSecondHand") != 0,
             null));
         menu.addItem(new WatchUi.ToggleMenuItem(
             WatchUi.loadResource(Rez.Strings.showBbMenuTitle),
             null,
             "showBb",
-            getProperty("showBb"),
+            Application.Properties.getValue("showBb"),
             null));
         menu.addItem(new WatchUi.ToggleMenuItem(
             WatchUi.loadResource(Rez.Strings.showStressMenuTitle),
             null,
             "showStress",
-            getProperty("showStress"),
+            Application.Properties.getValue("showStress"),
             null));
         menu.addItem(new WatchUi.ToggleMenuItem(
             WatchUi.loadResource(Rez.Strings.powerSaverMenuTitle),
             null,
             "powerSaver",
-            getProperty("powerSaver") != 1,
+            Application.Properties.getValue("powerSaver") != 1,
             null));
         menu.addItem(new WatchUi.ToggleMenuItem(
             WatchUi.loadResource(Rez.Strings.showLostAndFoundMenuTitle),
             null,
             "showLostAndFound",
-            getProperty("showLostAndFound") != -999,
+            Application.Properties.getValue("showLostAndFound") != -999,
             null));
         return [menu, new SmartArcsActiveSettingsMenuDelegate()];
     }
